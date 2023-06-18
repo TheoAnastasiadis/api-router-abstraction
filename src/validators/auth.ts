@@ -10,7 +10,7 @@
  *
  * In this example, the auth parameter can take either one of `auth_simple` or `auth_admin`.
  */
-export type AuthT<R extends authRegistry> = `auth_${(keyof R) & string}`
+export type AuthT<R extends authRegistry> = `auth_${keyof R & string}`
 
 export type authRegistry = Record<string, () => Object | undefined>
 
@@ -20,5 +20,3 @@ export type returnObject<
 > = A extends `auth_${infer N extends string}`
     ? { user: ReturnType<R[N]> }
     : never
-
-

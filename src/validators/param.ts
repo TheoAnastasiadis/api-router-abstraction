@@ -34,22 +34,24 @@ export type returnObject<P extends ParamT> = P extends `/:${string}(${string})`
     : Readonly<{}>
 
 // "/posts" -> "/true", "/:id(numer)" -> "/posts"
-export const ParamValidator : ValidatorI<ParamT> = 
-{
-    is: function(val: string) : val is ParamT {
-        return !!val
-        .match(/\/(?:(?:(?:[a-zA-z0-9]*)$)|(?::\w*?\((?:(?:number)|(?:string)|(?:boolean))\)$))/gm)
+export const ParamValidator: ValidatorI<ParamT> = {
+    is: function (val: string): val is ParamT {
+        return !!val.match(
+            /\/(?:(?:(?:[a-zA-z0-9]*)$)|(?::\w*?\((?:(?:number)|(?:string)|(?:boolean))\)$))/gm
+        )
     },
     consume: (request: RequestT, validator: ParamT) => {
-
         //parse path info
-        const {path} = request // "/posts/3/"
-        const {element, rest} = path
-        .match(/\/(?<element>\w*)(?:(?<rest>[/?].*))?/)?.groups || {element: ""}
+        const { path } = request // "/posts/3/"
+        const { element, rest } = path.match(
+            /\/(?<element>\w*)(?:(?<rest>[/?].*))?/
+        )?.groups || { element: "" }
         //parse validator info
-        if (validator.startsWith('/:')) { // "/:id(number)"
-            const {name, type} = 
-            validator.match(/\/(?::(?<name>\w*?)\((?<type>\w*?)\))/)?.groups || {name: ''}
+        if (validator.startsWith("/:")) {
+            // "/:id(number)"
+            const { name, type } = validator.match(
+                /\/(?::(?<name>\w*?)\((?<type>\w*?)\))/
+            )?.groups || { name: "" }
             //initializations
             let consumed = {}
             let healthy = true
@@ -57,28 +59,31 @@ export const ParamValidator : ValidatorI<ParamT> =
                 case "number":
                     const num = Number(element)
                     if (isNaN(num)) healthy = false
-                    else consumed = {[name]: num} //{id: 3}
-                    break;
+                    else consumed = { [name]: num } //{id: 3}
+                    break
 
-                case "boolean": 
+                case "boolean":
                     const bool = element == "true"
-                    if (element != "false") healthy = false
-                    consumed = {[name]: bool}
-                    break;
-            
+                    healthy = element == "true" || element == "false"
+                    consumed = { [name]: bool }
+                    break
+
                 default: //string
                     const str = element
-                    consumed = {[name]: str}
-                    break;
+                    consumed = { [name]: str }
+                    break
             }
 
-            return {...request, path: rest, consumed, healthy}
-        } else { // "/string"
-            const {name} = validator.match(/\/(?<name>\w*)/)?.groups || {name: ''}
+            return { ...request, path: rest, consumed, healthy }
+        } else {
+            // "/string"
+            const { name } = validator.match(/\/(?<name>\w*)/)?.groups || {
+                name: "",
+            }
             console.warn([name, element])
-            if (element != name) 
-            return {...request, path: rest, consumed: {}, healthy: false}
-            else return {...request, path: rest, consumed: {}, healthy: true}
+            if (element != name)
+                return { ...request, path: rest, consumed: {}, healthy: false }
+            else return { ...request, path: rest, consumed: {}, healthy: true }
         }
-    }
+    },
 }
