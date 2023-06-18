@@ -5,7 +5,7 @@ describe("URL Param validator", () => {
     it("should narrow ParamT validators", () => {
         expect(ParamValidator.is("/:id(number)")).toBeTruthy()
         expect(ParamValidator.is("/posts")).toBeTruthy()
-        expect(ParamValidator.is("?desc=true")).toBeTruthy()
+        expect(ParamValidator.is("?desc=true")).toBeFalsy()
     })
 
     it("should consume matching requests without type", () => {

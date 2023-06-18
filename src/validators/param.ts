@@ -80,7 +80,6 @@ export const ParamValidator: ValidatorI<ParamT> = {
             const { name } = validator.match(/\/(?<name>\w*)/)?.groups || {
                 name: "",
             }
-            console.warn([name, element])
             if (element != name)
                 return { ...request, path: rest, consumed: {}, healthy: false }
             else return { ...request, path: rest, consumed: {}, healthy: true }
