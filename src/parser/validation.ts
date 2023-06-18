@@ -2,6 +2,7 @@ import { Validator } from "../validators"
 import { authRegistry } from "../validators/auth"
 import { bodyRegistry } from "../validators/body"
 import { ParamValidator } from "../validators/param"
+import { QueryValidator } from "../validators/query"
 import { ConsumedRequest, RequestT } from "./request"
 
 export const validate = <BR extends bodyRegistry, AR extends authRegistry>(
@@ -13,6 +14,11 @@ export const validate = <BR extends bodyRegistry, AR extends authRegistry>(
         let healthy: boolean = false
         if (ParamValidator.is(validator)) {
             const result = ParamValidator.consume(request, validator)
+            newPath = result.path
+            consumed = result.consumed
+            healthy = result.healthy
+        } else if (QueryValidator.is(validator)) {
+            const result = QueryValidator.consume(request, validator)
             newPath = result.path
             consumed = result.consumed
             healthy = result.healthy
