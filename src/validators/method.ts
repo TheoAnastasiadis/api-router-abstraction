@@ -1,3 +1,4 @@
+import { RequestT } from "../parser/request"
 import { ValidatorI } from "./validator"
 
 /**
@@ -34,7 +35,7 @@ export const MethodValidator: ValidatorI<MethodT> = {
             .map((method) => ["GET", "POST", "PUT", "DELETE"].includes(method))
             .reduce((p, c) => p && c)
     },
-    consume(request, validator) {
+    consume(request: RequestT, validator: MethodT) {
         //parse request info
         const { path, method, headers, cookies } = request
         //parse validator info

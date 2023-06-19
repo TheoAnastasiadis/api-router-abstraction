@@ -3,6 +3,7 @@ export type RequestT = {
     method?: string
     headers?: Map<string, string>
     cookies?: Map<string, string>
+    body?: object
 }
 
 export type ConsumedRequest<T> = {
