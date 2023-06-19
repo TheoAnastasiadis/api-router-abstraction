@@ -44,13 +44,13 @@ export const ParamValidator: ValidatorI<ParamT> = {
         const { path } = request
         const { element, rest } = path.match(
             /\/(?<element>\w*)(?:(?<rest>[/?].*))?/
-        )?.groups || { element: "" }
+        )?.groups || { element: "", rest: "" }
         //parse validator info
         if (validator.startsWith("/:")) {
             // "/:id(number)"
             const { name, type } = validator.match(
                 /\/(?::(?<name>\w*?)\((?<type>\w*?)\))/
-            )?.groups || { name: "" }
+            )?.groups || { name: "", type: "" }
             //initializations
             let consumed = {}
             let healthy = true
@@ -69,6 +69,7 @@ export const ParamValidator: ValidatorI<ParamT> = {
 
                 default: // ex. "/:user(string)"
                     const str = element
+                    healthy = str.length > 0
                     consumed = { [name]: str }
                     break
             }

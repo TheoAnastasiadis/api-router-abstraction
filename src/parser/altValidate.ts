@@ -36,17 +36,17 @@ export function altValidate<
             if (newValidation.healthy)
                 return {
                     consumedRequest: newValidation,
-                    nextIdx: parseInt(idx) + 1,
+                    nextIdx: 1,
                     newLevel: Array.isArray(validators[idx])
                         ? (validators[idx] as _.RecursiveArray<
                               Validator<BR, AR>
                           >)
-                        : [validators[idx]],
+                        : validators,
                 }
 
             return {
                 consumedRequest: { ...previousValidation, healthy: false },
-                nextIdx: crntIdx++,
+                nextIdx: crntIdx + 1,
                 newLevel: validators,
             }
         }
@@ -55,7 +55,10 @@ export function altValidate<
     //base case; validation has already failed.
     return {
         consumedRequest: previousValidation,
-        nextIdx: crntIdx++,
+        nextIdx: crntIdx + 1,
         newLevel: validators,
     }
 }
+
+// [  <>  ,  [  <>  ,  <>  ]  ]
+// [  <>  ,  <*>  ]

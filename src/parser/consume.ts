@@ -37,7 +37,7 @@ export function consumeRoute<BR extends bodyRegistry, AR extends authRegistry>(
     }
 
     //loop
-    while (validation.healthy && crntIdx <= level.length) {
+    while (validation.healthy && crntIdx < level.length) {
         if (isValue(level[crntIdx])) {
             const { consumedRequest, nextIdx } = chainValidate(
                 validation,

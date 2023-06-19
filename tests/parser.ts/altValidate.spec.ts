@@ -1,8 +1,9 @@
 import { RequestT } from "../../src/parser/request"
-import { chainValidate } from "../../src/parser/chainValidate"
+import { altValidate } from "../../src/parser/altValidate"
 import { bodyRegistry } from "../../src/validators/body"
 import { authRegistry } from "../../src/validators/auth"
 import { Validator } from "../../src/validators"
+import * as _ from "lodash"
 
 describe("chainValidate", () => {
     const request: RequestT = {
@@ -15,13 +16,12 @@ describe("chainValidate", () => {
     const crntIdx = 0
 
     it("consumes matching requests", () => {
-        const validators: Validator<
-            typeof bodyRegistry,
-            typeof authRegistry
-        >[] = ["/posts", "/:id(number)"]
-        const result1 = chainValidate(
+        const validators: _.RecursiveArray<
+            Validator<typeof bodyRegistry, typeof authRegistry>
+        > = [["/posts", "/:id(number)"], "?desc=boolean!"]
+        const result1 = altValidate(
             previousValidation,
-            validators[0],
+            validators,
             bodyRegistry,
             authRegistry,
             crntIdx
@@ -33,23 +33,8 @@ describe("chainValidate", () => {
                 consumed: {},
                 healthy: true,
             },
+            newLevel: validators[0],
             nextIdx: 1,
-        })
-        const result2 = chainValidate(
-            result1.consumedRequest,
-            validators[1],
-            bodyRegistry,
-            authRegistry,
-            result1.nextIdx
-        )
-        expect(result2).toEqual({
-            consumedRequest: {
-                path: "?incognito=true",
-                method: "GET",
-                consumed: { id: 3 },
-                healthy: true,
-            },
-            nextIdx: 2,
         })
     })
 
@@ -57,40 +42,23 @@ describe("chainValidate", () => {
         const validators: Validator<
             typeof bodyRegistry,
             typeof authRegistry
-        >[] = ["/posts", "/:onlyNew(boolean)"]
-        const result1 = chainValidate(
+        >[] = ["/news", "?trending=boolean!"]
+        const result1 = altValidate(
             previousValidation,
-            validators[0],
+            validators,
             bodyRegistry,
             authRegistry,
             crntIdx
         )
         expect(result1).toEqual({
             consumedRequest: {
-                path: "/3?incognito=true",
+                path: "/posts/3?incognito=true",
                 method: "GET",
                 consumed: {},
-                healthy: true,
-            },
-            nextIdx: 1,
-        })
-        const result2 = chainValidate(
-            result1.consumedRequest,
-            validators[1],
-            bodyRegistry,
-            authRegistry,
-            result1.nextIdx
-        )
-        expect(result2).toEqual({
-            consumedRequest: {
-                path: "?incognito=true",
-                method: "GET",
-                consumed: {
-                    onlyNew: false,
-                },
                 healthy: false,
             },
-            nextIdx: 2,
+            newLevel: validators,
+            nextIdx: 1,
         })
     })
 })
