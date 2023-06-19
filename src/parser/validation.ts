@@ -1,6 +1,6 @@
 import { Validator } from "../validators"
 import { authRegistry } from "../validators/auth"
-import { bodyRegistry } from "../validators/body"
+import { BodyT, BodyValidator, bodyRegistry } from "../validators/body"
 import { MethodValidator } from "../validators/method"
 import { ParamValidator } from "../validators/param"
 import { QueryValidator } from "../validators/query"
@@ -9,10 +9,7 @@ import { ConsumedRequest, RequestT } from "./request"
 export const validate = <BR extends bodyRegistry, AR extends authRegistry>(
     request: RequestT
 ) => ({
-    with: (validator: Validator<BR, AR>) => {
-        let newPath: string
-        let consumed: object
-        let healthy: boolean = false
+    with: (validator: Validator<BR, AR>, bodyRegistry: BR) => {
         let result: ConsumedRequest<any>
         if (ParamValidator.is(validator)) {
             result = ParamValidator.consume(request, validator)
@@ -20,6 +17,8 @@ export const validate = <BR extends bodyRegistry, AR extends authRegistry>(
             result = QueryValidator.consume(request, validator)
         } else if (MethodValidator.is(validator)) {
             result = MethodValidator.consume(request, validator)
+        } else if (BodyValidator.is(validator, bodyRegistry)) {
+            result = BodyValidator.consume(request, validator, bodyRegistry)
         } else {
             result = { ...request, consumed: {}, healthy: false }
         }

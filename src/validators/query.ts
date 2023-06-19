@@ -1,4 +1,4 @@
-import { ConsumedRequest } from "../parser/request"
+import { ConsumedRequest, RequestT } from "../parser/request"
 import { ValidatorI } from "./validator"
 
 //helpers
@@ -42,13 +42,13 @@ export const QueryValidator: ValidatorI<QueryT> = {
     is: function (val: string): val is QueryT {
         return !!val.match(/^\?(?:\*=\S*&){0,}(?:.\S*=\S*)$/gm)
     },
-    consume: (request, validator) => {
+    consume: (request: RequestT, validator: QueryT) => {
         //parse path info
         const [_, query] = request.path.split("?")
-        const real = Array.from((new URLSearchParams(query)).entries())
+        const real = Array.from(new URLSearchParams(query).entries())
 
         //parseValidatorinfo
-        const expected = Array.from((new URLSearchParams(validator)).entries())
+        const expected = Array.from(new URLSearchParams(validator).entries())
 
         let consumed = {}
         const unhealty = { ...request, consumed: {}, healthy: false }
@@ -62,7 +62,7 @@ export const QueryValidator: ValidatorI<QueryT> = {
             if (!found) continue
 
             const [realName, realValue] = found
-            switch (match.replace("!","")/*don't need this any more*/) {
+            switch (match.replace("!", "") /*don't need this any more*/) {
                 case "number": // ex. "page=number!"
                     const num = Number(realValue)
                     if (isNaN(num)) return unhealty

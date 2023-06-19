@@ -1,19 +1,23 @@
 import { Validator } from "."
 import { ConsumedRequest, RequestT } from "../parser/request"
 import { authRegistry } from "./auth"
-import { bodyRegistry } from "./body"
+import { BodyT, bodyRegistry } from "./body"
 import { returnObject } from "./returnObject"
 
-export interface ValidatorI<V extends Validator<any, any>> {
+export interface ValidatorI<T extends Validator<any, any>> {
     is: <BR extends bodyRegistry, AR extends authRegistry>(
         val: string,
         bodyRegistry?: BR,
         authRegistry?: AR
-    ) => val is Validator<BR, AR>
+    ) => val is T extends BodyT<any> ? BodyT<BR> : T
     consume: <BR extends bodyRegistry, AR extends authRegistry>(
         request: RequestT,
-        validator: V,
-        odyRegistry?: BR,
+        validator: T extends BodyT<any> ? BodyT<BR> : T,
+        bodyRegistry?: BR,
         authRegistry?: AR
-    ) => ConsumedRequest<returnObject<BR, AR, Validator<BR, AR>>>
+    ) => ConsumedRequest<
+        T extends BodyT<any>
+            ? returnObject<BR, AR, Validator<BR, AR>>
+            : returnObject<BR, AR, T>
+    >
 }

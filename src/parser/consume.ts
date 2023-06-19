@@ -1,49 +1,67 @@
-import * as _ from "lodash"
 import { Validator } from "../validators"
 import { authRegistry } from "../validators/auth"
 import { bodyRegistry } from "../validators/body"
 import { altValidate } from "./altValidate"
 import { chainValidate } from "./chainValidate"
-import { ValidationResult } from "./validationResult"
-
+import { ConsumedRequest, RequestT } from "./request"
+import * as _ from "lodash"
 /**
  * Recursivelly consume route applying either chain or alt validation.
  */
 export function consumeRoute<BR extends bodyRegistry, AR extends authRegistry>(
-    validation: ValidationResult<BR, AR>
+    request: RequestT,
+    validators: _.RecursiveArray<Validator<BR, AR>>,
+    bodyRegistry: BR,
+    authRegistry: AR
 ): object | false {
-    //===HELPERS===//
-
-    /**
-     * Checks if the argument is a singe value or an array
-     */
-    function isValue<T>(a: T | _.RecursiveArray<T>): a is T {
+    //helpers
+    function isValue(
+        a: Validator<BR, AR> | _.RecursiveArray<Validator<BR, AR>>
+    ): a is Validator<BR, AR> {
         return !Array.isArray(a)
     }
-
-    /**
-     * Checks if the validation can continue. For the validation process to be able to continue there needs to be a truthy `pending` value and also the length of the current level needs to be larger than the current index.
-     */
-    function canContinue(v: ValidationResult<BR, AR>): boolean {
-        return !!v.pending && v.level.length > v.crntIdx
+    function concatValidations<A, B>(
+        prev: ConsumedRequest<A>,
+        next: ConsumedRequest<B>
+    ): ConsumedRequest<A & B> {
+        return { ...next, consumed: { ...prev.consumed, ...next.consumed } }
     }
 
-    const { pending, level, crntIdx } = validation
-
-    let validationResult: ValidationResult<BR, AR>
-
-    const crntNode = level[crntIdx]
-    if (isValue(crntNode)) {
-        //crntNode is Validator<BR,AR>
-        validationResult = chainValidate(validation, crntNode)
-    } else {
-        //crntNode is _.RecursiveArray<Validator<BR,AR>>
-        validationResult = altValidate(validation, crntNode)
+    //initialization
+    let level: _.RecursiveArray<Validator<BR, AR>> = validators
+    let crntIdx: number = 0
+    let validation: ConsumedRequest<object> = {
+        ...request,
+        consumed: {},
+        healthy: true,
     }
 
-    if (canContinue(validationResult))
-        return consumeRoute(validationResult) //recursive call
-    else if (pending)
-        return validationResult.consumed //if pending is still truthy
-    else return false //if pending is not truthy
+    //loop
+    while (validation.healthy && crntIdx <= level.length) {
+        if (isValue(level[crntIdx])) {
+            const { consumedRequest, nextIdx } = chainValidate(
+                validation,
+                level[crntIdx] as Validator<BR, AR>,
+                bodyRegistry,
+                authRegistry,
+                crntIdx
+            )
+            validation = concatValidations(validation, consumedRequest)
+            crntIdx = nextIdx
+        } else {
+            const { consumedRequest, nextIdx, newLevel } = altValidate(
+                validation,
+                level[crntIdx] as _.RecursiveArray<Validator<BR, AR>>,
+                bodyRegistry,
+                authRegistry,
+                crntIdx
+            )
+            validation = concatValidations(validation, consumedRequest)
+            crntIdx = nextIdx
+            level = newLevel
+        }
+    }
+
+    if (validation.healthy) return validation.consumed
+    else return false
 }
