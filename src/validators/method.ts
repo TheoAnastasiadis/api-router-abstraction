@@ -6,9 +6,7 @@ import { ValidatorI } from "./validator"
  * Examples: GET, POST, etc.
  *
  */
-export type MethodT = Method
-
-type Method =
+export type MethodT =
     | "GET"
     | "POST"
     | "DELETE"
