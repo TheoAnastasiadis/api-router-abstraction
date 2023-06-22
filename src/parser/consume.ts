@@ -1,6 +1,6 @@
-import { Validator } from "../validators"
+import { Matcher } from "../matchers"
 import { authRegistry } from "../matchers/auth"
-import { bodyRegistry } from "../validators/body"
+import { bodyRegistry } from "../matchers/body"
 import { altValidate } from "./altValidate"
 import { chainValidate } from "./chainValidate"
 import { ConsumedRequest, RequestT } from "../common/request"

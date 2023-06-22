@@ -1,15 +1,16 @@
-import { Validator } from "../validators"
+import { Matcher } from "../matchers"
 import { authRegistry } from "../matchers/auth"
-import { BodyT, BodyValidator, bodyRegistry } from "../validators/body"
-import { MethodValidator } from "../validators/method"
-import { ParamValidator } from "../validators/param"
-import { QueryValidator } from "../validators/query"
+import { bodyRegistry } from "../matchers/body"
+import { MethodValidator } from "../validators/method.validator"
+import { ParamValidator } from "../validators/param.validator"
+import { QueryValidator } from "../validators/query.validator"
 import { ConsumedRequest, RequestT } from "../common/request"
+import { BodyValidator } from "../validators/body.validator"
 
 export const validate = <BR extends bodyRegistry, AR extends authRegistry>(
     request: RequestT
 ) => ({
-    with: (validator: Validator<BR, AR>, bodyRegistry: BR) => {
+    with: (validator: Matcher<BR, AR>, bodyRegistry: BR) => {
         let result: ConsumedRequest<any>
         if (ParamValidator.is(validator)) {
             result = ParamValidator.consume(request, validator)
