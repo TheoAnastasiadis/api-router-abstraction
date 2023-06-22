@@ -1,37 +1,9 @@
 import { RequestT } from "../common/request"
-import { ValidatorI } from "./validator"
-
-//helpers
-type paramName<P extends string> = P extends `/:${infer T}(${string})`
-    ? T
-    : P extends `/${infer T}`
-    ? T
-    : never
-
-type paramType<P extends string> = P extends `/:${string}(${infer T})`
-    ? T extends "number"
-        ? number
-        : T extends "string"
-        ? string
-        : boolean
-    : undefined
-
-/**
- * Param validators. This will have to be mached to param literals in the path, and will append corresponding parameters to the controller.
- *
- * For example:
- * '/posts' => Controller(...args)
- * '/:id' => Controller(id, ...args)
- */
-export type ParamT =
-    | `/:${string}(number)`
-    | `/:${string}(string)`
-    | `/:${string}(boolean)`
-    | `/${string}`
-
-export type returnObject<P extends ParamT> = P extends `/:${string}(${string})`
-    ? Readonly<Record<paramName<P>, paramType<P>>>
-    : Readonly<{}>
+import { authRegistry } from "../matchers/auth"
+import { bodyRegistry } from "../matchers/body"
+import { ParamT } from "../matchers/param"
+import { returnObject } from "../returnObjects"
+import { ValidatorI } from "./validator.interface"
 
 export const ParamValidator: ValidatorI<ParamT> = {
     is: function (val: string): val is ParamT {
@@ -40,19 +12,26 @@ export const ParamValidator: ValidatorI<ParamT> = {
         )
     },
     consume: (request: RequestT, validator: ParamT) => {
+        //helpers
+        function hasType(
+            v: ParamT
+        ): v is `/:${string}(${"string" | "number" | "boolean"})` {
+            return validator.startsWith("/:")
+        }
+
         //parse path info
         const { path } = request
         const { element, rest } = path.match(
             /\/(?<element>\w*)(?:(?<rest>[/?].*))?/
         )?.groups || { element: "", rest: "" }
         //parse validator info
-        if (validator.startsWith("/:")) {
+        if (hasType(validator)) {
             // "/:id(number)"
             const { name, type } = validator.match(
                 /\/(?::(?<name>\w*?)\((?<type>\w*?)\))/
             )?.groups || { name: "", type: "" }
             //initializations
-            let consumed = {}
+            let consumed: returnObject<any, any, typeof validator> = {}
             let healthy = true
             switch (type) {
                 case "number": // ex. "/:id(number)""

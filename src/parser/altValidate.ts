@@ -1,5 +1,5 @@
 import { Validator } from "../validators"
-import { authRegistry } from "../validators/auth"
+import { authRegistry } from "../matchers/auth"
 import { bodyRegistry } from "../validators/body"
 import { ConsumedRequest } from "../common/request"
 import { validate } from "./validation"

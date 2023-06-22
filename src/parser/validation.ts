@@ -1,5 +1,5 @@
 import { Validator } from "../validators"
-import { authRegistry } from "../validators/auth"
+import { authRegistry } from "../matchers/auth"
 import { BodyT, BodyValidator, bodyRegistry } from "../validators/body"
 import { MethodValidator } from "../validators/method"
 import { ParamValidator } from "../validators/param"

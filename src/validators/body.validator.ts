@@ -1,35 +1,8 @@
+import { RequestT } from "../common/request"
+import { BodyT, bodyRegistry } from "../matchers/body"
+import { returnObject } from "../returnObjects"
+import { ValidatorI } from "./validator.interface"
 import * as t from "io-ts"
-import { ConsumedRequest, RequestT } from "../common/request"
-import { ValidatorI } from "./validator"
-
-/**
- * Body contraints. These will be matched to body objects at runtimes using io-ts types. The name of a body parameter should be `{keyof bodyRegistry}_body`
- *
- * For example with a body registry of
- * ```{
- *  post: t.type({
- *      date: t.string,
- *      text: t.string
- *      }),
- * } & {
- *  user: t.type({
- *      name: t.string,
- *      id: t.number
- *      })
- * }```
- *
- * the body parameter can take either one of `post_body` or `user_body`.
- */
-export type BodyT<R extends bodyRegistry> = `${keyof R & string}_body`
-
-export type bodyRegistry = Record<string, t.TypeC<any>>
-
-export type returnObject<
-    R extends bodyRegistry,
-    B extends BodyT<R>
-> = B extends `${infer N extends keyof R & string}_body`
-    ? { body: t.TypeOf<R[N]> }
-    : never
 
 export const BodyValidator: ValidatorI<BodyT<any>> = {
     is<BR extends bodyRegistry>(
@@ -46,18 +19,27 @@ export const BodyValidator: ValidatorI<BodyT<any>> = {
             registryKeys.includes(validatorKey)
         )
     },
-    consume(request: RequestT, validator, bodyRegistry) {
+    consume<BR extends bodyRegistry>(
+        request: RequestT,
+        validator: BodyT<BR>,
+        bodyRegistry?: BR
+    ) {
+        if (typeof bodyRegistry == "undefined")
+            throw new TypeError("Argument `bodyregistry` must be provided")
+
         //request info
         const { body } = request
         //validator info
         const { key } = validator.match(/(?<key>\w*?)_body/)?.groups as {
-            key: string
+            key: keyof typeof bodyRegistry
         }
 
-        if (typeof body == "undefined" || !bodyRegistry)
+        if (typeof body == "undefined")
             return {
                 ...request,
-                consumed: { body: {} },
+                consumed: {
+                    body: {},
+                } as returnObject<BR, any, typeof validator>,
                 healthy: true,
             }
 
@@ -66,16 +48,16 @@ export const BodyValidator: ValidatorI<BodyT<any>> = {
             return {
                 ...request,
                 consumed: {
-                    body: decoded.right as t.TypeOf<
+                    body: decoded.right satisfies t.TypeOf<
                         (typeof bodyRegistry)[typeof key]
                     >,
-                },
+                } as returnObject<BR, any, typeof validator>,
                 healthy: true,
             }
 
         return {
             ...request,
-            consumed: { body: {} },
+            consumed: { body: {} } as returnObject<BR, any, typeof validator>,
             healthy: false,
         }
     },

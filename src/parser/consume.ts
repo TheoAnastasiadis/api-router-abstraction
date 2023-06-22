@@ -1,5 +1,5 @@
 import { Validator } from "../validators"
-import { authRegistry } from "../validators/auth"
+import { authRegistry } from "../matchers/auth"
 import { bodyRegistry } from "../validators/body"
 import { altValidate } from "./altValidate"
 import { chainValidate } from "./chainValidate"
