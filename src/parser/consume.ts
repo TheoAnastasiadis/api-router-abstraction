@@ -3,21 +3,22 @@ import { authRegistry } from "../validators/auth"
 import { bodyRegistry } from "../validators/body"
 import { altValidate } from "./altValidate"
 import { chainValidate } from "./chainValidate"
-import { ConsumedRequest, RequestT } from "./request"
+import { ConsumedRequest, RequestT } from "../common/request"
 import * as _ from "lodash"
+import { Wrapped } from "../common/wrappers"
 /**
  * Recursivelly consume route applying either chain or alt validation.
  */
 export function consumeRoute<BR extends bodyRegistry, AR extends authRegistry>(
     request: RequestT,
-    validators: _.RecursiveArray<Validator<BR, AR>>,
+    validators: _.RecursiveArray<Wrapped<any>>,
     bodyRegistry: BR,
     authRegistry: AR
 ): object | false {
     //helpers
     function isValue(
-        a: Validator<BR, AR> | _.RecursiveArray<Validator<BR, AR>>
-    ): a is Validator<BR, AR> {
+        a: Wrapped<any> | _.RecursiveArray<Wrapped<any>>
+    ): a is Wrapped<any> {
         return !Array.isArray(a)
     }
     function concatValidations<A, B>(
@@ -28,7 +29,7 @@ export function consumeRoute<BR extends bodyRegistry, AR extends authRegistry>(
     }
 
     //initialization
-    let level: _.RecursiveArray<Validator<BR, AR>> = validators
+    let level: _.RecursiveArray<Wrapped<any>> = validators
     let crntIdx: number = 0
     let validation: ConsumedRequest<object> = {
         ...request,
@@ -41,7 +42,7 @@ export function consumeRoute<BR extends bodyRegistry, AR extends authRegistry>(
         if (isValue(level[crntIdx])) {
             const { consumedRequest, nextIdx } = chainValidate(
                 validation,
-                level[crntIdx] as Validator<BR, AR>,
+                level[crntIdx] as Wrapped<any>,
                 bodyRegistry,
                 authRegistry,
                 crntIdx
@@ -51,7 +52,7 @@ export function consumeRoute<BR extends bodyRegistry, AR extends authRegistry>(
         } else {
             const { consumedRequest, nextIdx, newLevel } = altValidate(
                 validation,
-                level[crntIdx] as _.RecursiveArray<Validator<BR, AR>>,
+                level[crntIdx] as _.RecursiveArray<Wrapped<any>>,
                 bodyRegistry,
                 authRegistry,
                 crntIdx

@@ -1,4 +1,4 @@
-import { RequestT } from "../../src/parser/request"
+import { RequestT } from "../../src/common/request"
 import { BodyValidator, bodyRegistry } from "../../src/validators/body"
 import * as t from "io-ts"
 

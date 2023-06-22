@@ -1,5 +1,5 @@
 import { Validator } from "."
-import { ConsumedRequest, RequestT } from "../parser/request"
+import { ConsumedRequest, RequestT } from "../common/request"
 import { authRegistry } from "./auth"
 import { BodyT, bodyRegistry } from "./body"
 import { returnObject } from "./returnObject"

@@ -1,4 +1,4 @@
-import { RequestT } from "../../src/parser/request"
+import { RequestT } from "../../src/common/request"
 import { ParamT, ParamValidator } from "../../src/validators/param"
 
 describe("URL Param validator", () => {

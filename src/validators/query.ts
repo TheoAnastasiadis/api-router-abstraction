@@ -1,4 +1,4 @@
-import { ConsumedRequest, RequestT } from "../parser/request"
+import { ConsumedRequest, RequestT } from "../common/request"
 import { ValidatorI } from "./validator"
 
 //helpers

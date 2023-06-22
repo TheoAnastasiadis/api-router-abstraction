@@ -1,5 +1,5 @@
 import * as t from "io-ts"
-import { ConsumedRequest, RequestT } from "../parser/request"
+import { ConsumedRequest, RequestT } from "../common/request"
 import { ValidatorI } from "./validator"
 
 /**
@@ -28,8 +28,8 @@ export type returnObject<
     R extends bodyRegistry,
     B extends BodyT<R>
 > = B extends `${infer N extends keyof R & string}_body`
-    ? { body: t.TypeOf<R[N]> | Readonly<{}> }
-    : { body: Readonly<{}> }
+    ? { body: t.TypeOf<R[N]> }
+    : never
 
 export const BodyValidator: ValidatorI<BodyT<any>> = {
     is<BR extends bodyRegistry>(

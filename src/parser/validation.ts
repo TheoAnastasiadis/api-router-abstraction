@@ -4,7 +4,7 @@ import { BodyT, BodyValidator, bodyRegistry } from "../validators/body"
 import { MethodValidator } from "../validators/method"
 import { ParamValidator } from "../validators/param"
 import { QueryValidator } from "../validators/query"
-import { ConsumedRequest, RequestT } from "./request"
+import { ConsumedRequest, RequestT } from "../common/request"
 
 export const validate = <BR extends bodyRegistry, AR extends authRegistry>(
     request: RequestT

@@ -1,4 +1,4 @@
-import { RequestT } from "../parser/request"
+import { RequestT } from "../common/request"
 import { ValidatorI } from "./validator"
 
 /**

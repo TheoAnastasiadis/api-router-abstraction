@@ -1,8 +1,9 @@
-import { RequestT } from "../../src/parser/request"
+import { RequestT } from "../../src/common/request"
 import { chainValidate } from "../../src/parser/chainValidate"
 import { bodyRegistry } from "../../src/validators/body"
 import { authRegistry } from "../../src/validators/auth"
 import { Validator } from "../../src/validators"
+import { ValidatorWrapper } from "../../src/common/wrappers"
 
 describe("chainValidate", () => {
     const request: RequestT = {
@@ -15,10 +16,12 @@ describe("chainValidate", () => {
     const crntIdx = 0
 
     it("consumes matching requests", () => {
-        const validators: Validator<
-            typeof bodyRegistry,
-            typeof authRegistry
-        >[] = ["/posts", "/:id(number)"]
+        const validators: ValidatorWrapper<
+            Validator<typeof bodyRegistry, typeof authRegistry>
+        >[] = [
+            { _tag: "validator", value: "/posts" },
+            { _tag: "validator", value: "/:id(number)" },
+        ]
         const result1 = chainValidate(
             previousValidation,
             validators[0],
@@ -54,10 +57,12 @@ describe("chainValidate", () => {
     })
 
     it("consumes non matching requests", () => {
-        const validators: Validator<
-            typeof bodyRegistry,
-            typeof authRegistry
-        >[] = ["/posts", "/:onlyNew(boolean)"]
+        const validators: ValidatorWrapper<
+            Validator<typeof bodyRegistry, typeof authRegistry>
+        >[] = [
+            { _tag: "validator", value: "/posts" },
+            { _tag: "validator", value: "/:onlyNew(boolean)" },
+        ]
         const result1 = chainValidate(
             previousValidation,
             validators[0],
