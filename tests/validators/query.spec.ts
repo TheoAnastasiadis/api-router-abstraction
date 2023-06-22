@@ -1,4 +1,4 @@
-import { QueryValidator } from "../../src/validators/query"
+import { QueryValidator } from "../../src/validators/query.validator"
 
 describe("QueryValidator", () => {
     it("should be able to narrow query validators", () => {

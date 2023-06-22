@@ -1,9 +1,9 @@
 import { RequestT } from "../../src/common/request"
 import { chainValidate } from "../../src/parser/chainValidate"
-import { bodyRegistry } from "../../src/validators/body"
-import { authRegistry } from "../../src/validators/auth"
-import { Validator } from "../../src/validators"
 import { ValidatorWrapper } from "../../src/common/wrappers"
+import { bodyRegistry } from "../../src/matchers/body"
+import { authRegistry } from "../../src/matchers/auth"
+import { Matcher } from "../../src/matchers"
 
 describe("chainValidate", () => {
     const request: RequestT = {
@@ -17,7 +17,7 @@ describe("chainValidate", () => {
 
     it("consumes matching requests", () => {
         const validators: ValidatorWrapper<
-            Validator<typeof bodyRegistry, typeof authRegistry>
+            Matcher<typeof bodyRegistry, typeof authRegistry>
         >[] = [
             { _tag: "validator", value: "/posts" },
             { _tag: "validator", value: "/:id(number)" },
@@ -58,7 +58,7 @@ describe("chainValidate", () => {
 
     it("consumes non matching requests", () => {
         const validators: ValidatorWrapper<
-            Validator<typeof bodyRegistry, typeof authRegistry>
+            Matcher<typeof bodyRegistry, typeof authRegistry>
         >[] = [
             { _tag: "validator", value: "/posts" },
             { _tag: "validator", value: "/:onlyNew(boolean)" },

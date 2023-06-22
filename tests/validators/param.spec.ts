@@ -1,5 +1,6 @@
 import { RequestT } from "../../src/common/request"
-import { ParamT, ParamValidator } from "../../src/validators/param"
+import { ParamT } from "../../src/matchers/param"
+import { ParamValidator } from "../../src/validators/param.validator"
 
 describe("URL Param validator", () => {
     it("should narrow ParamT validators", () => {

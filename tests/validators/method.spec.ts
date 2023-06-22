@@ -1,4 +1,4 @@
-import { MethodValidator } from "../../src/validators/method"
+import { MethodValidator } from "../../src/validators/method.validator"
 
 describe("MethodVaidator", () => {
     it("should narrow Method validators", () => {

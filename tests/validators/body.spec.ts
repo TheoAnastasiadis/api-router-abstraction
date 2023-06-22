@@ -1,5 +1,6 @@
 import { RequestT } from "../../src/common/request"
-import { BodyValidator, bodyRegistry } from "../../src/validators/body"
+import { bodyRegistry } from "../../src/matchers/body"
+import { BodyValidator } from "../../src/validators/body.validator"
 import * as t from "io-ts"
 
 describe("BodyValidator", () => {

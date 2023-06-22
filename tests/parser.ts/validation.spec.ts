@@ -1,5 +1,5 @@
 import { validate } from "../../src/parser/validation"
-import { bodyRegistry } from "../../src/validators/body"
+import { bodyRegistry } from "../../src/matchers/body"
 import * as t from "io-ts"
 
 describe("validate function", () => {
