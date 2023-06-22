@@ -1,5 +1,4 @@
-import { ParserI, createParser } from "../common/parser"
-import { Wrapped } from "../common/wrappers"
+import { createParser } from "../common/parser"
 
 /**
  * Helper function to create parsers from controllers.

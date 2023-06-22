@@ -1,10 +1,10 @@
-import { Validator } from "../validators"
-import { authRegistry } from "../validators/auth"
-import { bodyRegistry } from "../validators/body"
-import { combineReturnObjects, returnObject } from "../validators/returnObject"
 import { ParserI, createParser } from "../common/parser"
 import { Wrapped, ValidatorWrapper } from "../common/wrappers"
 import * as _ from "lodash"
+import { Matcher } from "../matchers"
+import { authRegistry } from "../matchers/auth"
+import { bodyRegistry } from "../matchers/body"
+import { combine, returnObject } from "../returnObjects"
 
 export const chain = {
     withConfig<BR extends bodyRegistry, AR extends authRegistry>(
@@ -12,14 +12,11 @@ export const chain = {
         ar: AR
     ) {
         function chain<
-            const K extends Validator<BR, AR>,
+            const K extends Matcher<BR, AR>,
             const P extends Record<string, any>,
             const C extends _.RecursiveArray<Wrapped<any>>
         >(
-            child: Record<
-                K,
-                ParserI<C, combineReturnObjects<[P, returnObject<BR, AR, K>]>>
-            >
+            child: Record<K, ParserI<C, combine<[P, returnObject<BR, AR, K>]>>>
         ): ParserI<
             [ValidatorWrapper<K>, ...C],
             keyof returnObject<BR, AR, K> extends never

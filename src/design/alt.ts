@@ -1,7 +1,7 @@
-import { Validator } from "../validators"
-import { authRegistry } from "../validators/auth"
-import { bodyRegistry } from "../validators/body"
-import { returnObject } from "../validators/returnObject"
+import { Matcher } from "../matchers"
+import { authRegistry } from "../matchers/auth"
+import { bodyRegistry } from "../matchers/body"
+import { returnObject } from "../returnObjects"
 import { ParserI, createParser } from "../common/parser"
 import { Wrapped, ValidatorWrapper } from "../common/wrappers"
 import * as _ from "lodash"
@@ -12,8 +12,8 @@ export const alt = {
         ar: AR
     ) {
         function alt<
-            const K1 extends Validator<BR, AR>,
-            const K2 extends Validator<BR, AR>,
+            const K1 extends Matcher<BR, AR>,
+            const K2 extends Matcher<BR, AR>,
             const P1 extends Record<string, any>,
             const P2 extends Record<string, any>,
             const C1 extends _.RecursiveArray<Wrapped<any>>,
@@ -32,13 +32,13 @@ export const alt = {
         >
         function alt(
             ...children: [
-                Record<Validator<BR, AR>, ParserI<any, any, any>>,
-                Record<Validator<BR, AR>, ParserI<any, any, any>>,
-                ...Record<Validator<BR, AR>, ParserI<any, any, any>>[]
+                Record<Matcher<BR, AR>, ParserI<any, any, any>>,
+                Record<Matcher<BR, AR>, ParserI<any, any, any>>,
+                ...Record<Matcher<BR, AR>, ParserI<any, any, any>>[]
             ]
         ): ParserI<
             [
-                ValidatorWrapper<Validator<BR, AR>>,
+                ValidatorWrapper<Matcher<BR, AR>>,
                 ..._.RecursiveArray<Wrapped<any>>
             ][],
             any,
@@ -51,7 +51,7 @@ export const alt = {
                 { _tag: "validator", value: key },
                 ...alreadyConsumed[i],
             ]) as [
-                ValidatorWrapper<Validator<BR, AR>>,
+                ValidatorWrapper<Matcher<BR, AR>>,
                 ...(Wrapped<any> | _.RecursiveArray<Wrapped<any>>)[]
             ][]
 

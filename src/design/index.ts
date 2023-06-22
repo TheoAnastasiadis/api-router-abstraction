@@ -1,5 +1,5 @@
-import { authRegistry } from "../validators/auth"
-import { bodyRegistry } from "../validators/body"
+import { authRegistry } from "../matchers/auth"
+import { bodyRegistry } from "../matchers/body"
 import { chain as createChain } from "./chain"
 import { alt as createAlt } from "./alt"
 import { controller, f } from "./controller"
