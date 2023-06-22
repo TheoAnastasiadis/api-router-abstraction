@@ -1,11 +1,10 @@
 import { RequestT } from "../common/request"
 import { QueryT } from "../matchers/query"
+import isQueryT from "../narrowers/isQueryT"
 import { ValidatorI } from "./validator.interface"
 
 export const QueryValidator: ValidatorI<QueryT> = {
-    is: function (val: string): val is QueryT {
-        return !!val.match(/^\?(?:\*=\S*&){0,}(?:.\S*=\S*)$/gm)
-    },
+    is: isQueryT,
     consume: (request: RequestT, validator: QueryT) => {
         //parse path info
         const [_, query] = request.path.split("?")

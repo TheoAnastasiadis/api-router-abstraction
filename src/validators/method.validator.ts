@@ -1,14 +1,10 @@
 import { RequestT } from "../common/request"
 import { MethodT } from "../matchers/method"
+import isMethodT from "../narrowers/isMethodT"
 import { ValidatorI } from "./validator.interface"
 
 export const MethodValidator: ValidatorI<MethodT> = {
-    is(val: string): val is MethodT {
-        return val
-            .split(",")
-            .map((method) => ["GET", "POST", "PUT", "DELETE"].includes(method))
-            .reduce((p, c) => p && c)
-    },
+    is: isMethodT,
     consume(request: RequestT, validator: MethodT) {
         //parse request info
         const { path, method, headers, cookies } = request

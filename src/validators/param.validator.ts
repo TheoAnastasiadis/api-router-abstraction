@@ -1,16 +1,11 @@
 import { RequestT } from "../common/request"
-import { authRegistry } from "../matchers/auth"
-import { bodyRegistry } from "../matchers/body"
 import { ParamT } from "../matchers/param"
+import isParamT from "../narrowers/isParamT"
 import { returnObject } from "../returnObjects"
 import { ValidatorI } from "./validator.interface"
 
 export const ParamValidator: ValidatorI<ParamT> = {
-    is: function (val: string): val is ParamT {
-        return !!val.match(
-            /\/(?:(?:(?:[a-zA-z0-9]*)$)|(?::\w*?\((?:(?:number)|(?:string)|(?:boolean))\)$))/gm
-        )
-    },
+    is: isParamT,
     consume: (request: RequestT, validator: ParamT) => {
         //helpers
         function hasType(

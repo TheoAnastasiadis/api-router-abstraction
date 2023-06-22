@@ -1,24 +1,12 @@
 import { RequestT } from "../common/request"
 import { BodyT, bodyRegistry } from "../matchers/body"
+import isBodyT from "../narrowers/isBodyT"
 import { returnObject } from "../returnObjects"
 import { ValidatorI } from "./validator.interface"
 import * as t from "io-ts"
 
 export const BodyValidator: ValidatorI<BodyT<any>> = {
-    is<BR extends bodyRegistry>(
-        val: string,
-        bodyRegistry?: BR
-    ): val is BodyT<BR> {
-        const { validatorKey } = val.match(/(?<validatorKey>\w*?)_body/)
-            ?.groups || { validatorKey: undefined }
-        const registryKeys = Object.keys(bodyRegistry || {})
-
-        return (
-            !!bodyRegistry &&
-            !!validatorKey &&
-            registryKeys.includes(validatorKey)
-        )
-    },
+    is: isBodyT,
     consume<BR extends bodyRegistry>(
         request: RequestT,
         validator: BodyT<BR>,
