@@ -1,4 +1,5 @@
 import { ConsumedRequest, RequestT } from "../common/request"
+import { ConsumedResponse } from "../common/response"
 import { Matcher } from "../matchers"
 import { AuthT, authRegistry } from "../matchers/auth"
 import { BodyT, bodyRegistry } from "../matchers/body"
@@ -16,4 +17,13 @@ export interface ValidatorI<M extends Matcher<any, any>> {
         bodyRegistry?: BR,
         authRegistry?: AR
     ) => ConsumedRequest<any>
+    format: <
+        const BR extends bodyRegistry,
+        const AR extends authRegistry,
+        const m extends M extends BodyT<any> ? BodyT<BR> : M
+    >(
+        data: Record<string, any> & returnObject<BR, AR, m>,
+        matcher: m,
+        response: ConsumedResponse
+    ) => ConsumedResponse
 }

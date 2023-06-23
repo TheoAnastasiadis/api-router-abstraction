@@ -1,4 +1,5 @@
-import { createParser } from "../common/parser"
+import { ParserI } from "../common/parser"
+import { TaggedController } from "../common/wrappers"
 
 /**
  * Helper function to create parsers from controllers.
@@ -9,8 +10,14 @@ import { createParser } from "../common/parser"
  * const getPostById = (args: {id: number}) => Promise.resolve(...);
  * const parser = controller(getPostById); //ParserI<[],{id:number},[]>
  */
-export function controller<const P>(fa: (args: P) => any) {
-    return createParser([], {} as Readonly<P>) //The pending part of the parser doesn't exist at runtime.
+export function controller<const P>(
+    fa: (args: P) => any,
+    label?: string
+): ParserI<[TaggedController<typeof fa, typeof label>], Readonly<P>> {
+    return {
+        _consumed: [{ _tag: "Controller", value: fa, label }],
+        _pending: {} as Readonly<P>, //The pending part of the parser doesn't exist at runtime.
+    }
 }
 /**
  * @alias controller Alias of `controller` helper function

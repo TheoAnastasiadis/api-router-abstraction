@@ -2,9 +2,9 @@ import { Matcher } from "../matchers"
 import { authRegistry } from "../matchers/auth"
 import { bodyRegistry } from "../matchers/body"
 import { returnObject } from "../returnObjects"
-import { ParserI, createParser } from "../common/parser"
-import { Wrapped, ValidatorWrapper } from "../common/wrappers"
+import { ParserI } from "../common/parser"
 import * as _ from "lodash"
+import { TaggedController, TaggedMatcher } from "../common/wrappers"
 
 export const alt = {
     withConfig<BR extends bodyRegistry, AR extends authRegistry>(
@@ -16,13 +16,19 @@ export const alt = {
             const K2 extends Matcher<BR, AR>,
             const P1 extends Record<string, any>,
             const P2 extends Record<string, any>,
-            const C1 extends _.RecursiveArray<Wrapped<any>>,
-            const C2 extends _.RecursiveArray<Wrapped<any>>
+            const C1 extends [
+                TaggedController<any> | TaggedMatcher<Matcher<BR, AR>>,
+                ...any[]
+            ],
+            const C2 extends [
+                TaggedController<any> | TaggedMatcher<Matcher<BR, AR>>,
+                ...any[]
+            ]
         >(
             child1: Record<K1, ParserI<C1, P1 & returnObject<BR, AR, K1>>>,
             child2: Record<K2, ParserI<C2, P2 & returnObject<BR, AR, K2>>>
         ): ParserI<
-            [[ValidatorWrapper<K1>, ...C1], [ValidatorWrapper<K2>, ...C2]],
+            [[TaggedMatcher<K1>, ...C1], [TaggedMatcher<K2>, ...C2]],
             | (keyof returnObject<BR, AR, K1> extends never
                   ? P1
                   : Omit<P1, keyof returnObject<BR, AR, K1>>)
@@ -32,30 +38,33 @@ export const alt = {
         >
         function alt(
             ...children: [
-                Record<Matcher<BR, AR>, ParserI<any, any, any>>,
-                Record<Matcher<BR, AR>, ParserI<any, any, any>>,
-                ...Record<Matcher<BR, AR>, ParserI<any, any, any>>[]
+                Record<Matcher<BR, AR>, ParserI<any, any>>,
+                Record<Matcher<BR, AR>, ParserI<any, any>>,
+                ...Record<Matcher<BR, AR>, ParserI<any, any>>[]
             ]
         ): ParserI<
             [
-                ValidatorWrapper<Matcher<BR, AR>>,
-                ..._.RecursiveArray<Wrapped<any>>
-            ][],
-            any,
-            boolean
+                [TaggedMatcher<Matcher<BR, AR>>, ...any[]],
+                [TaggedMatcher<Matcher<BR, AR>>, ...any[]],
+                ...[TaggedMatcher<Matcher<BR, AR>>, ...any[]][]
+            ],
+            any
         > {
             const keys = children.map((child) => Object.keys(child)[0])
             const parsers = children.map((child) => Object.values(child)[0])
             const alreadyConsumed = parsers.map((parser) => parser._consumed)
             const newConsumed = keys.map((key, i) => [
-                { _tag: "validator", value: key },
+                { _tag: "Matcher", value: key },
                 ...alreadyConsumed[i],
             ]) as [
-                ValidatorWrapper<Matcher<BR, AR>>,
-                ...(Wrapped<any> | _.RecursiveArray<Wrapped<any>>)[]
-            ][]
-
-            return createParser(newConsumed, {})
+                [TaggedMatcher<Matcher<BR, AR>>, ...any[]],
+                [TaggedMatcher<Matcher<BR, AR>>, ...any[]],
+                ...[TaggedMatcher<Matcher<BR, AR>>, ...any[]][]
+            ]
+            return {
+                _consumed: newConsumed,
+                _pending: {},
+            }
         }
 
         const a = alt

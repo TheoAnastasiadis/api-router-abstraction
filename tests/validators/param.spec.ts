@@ -9,7 +9,7 @@ describe("URL Param validator", () => {
         expect(ParamValidator.is("?desc=true")).toBeFalsy()
     })
 
-    it("should consume matching requests without type", () => {
+    it("should match good requests without type", () => {
         const request: RequestT = { path: "/posts/2?desc=true" }
         const Validator: ParamT = "/posts"
         const consumed = ParamValidator.consume(request, Validator)
@@ -21,7 +21,7 @@ describe("URL Param validator", () => {
         })
     })
 
-    it("should consume matching requests with number type", () => {
+    it("should match good requests with number type", () => {
         const request: RequestT = { path: "/2?desc=true" }
         const Validator: ParamT = "/:id(number)"
         const consumed = ParamValidator.consume(request, Validator)
@@ -33,7 +33,7 @@ describe("URL Param validator", () => {
         })
     })
 
-    it("should consume matching requests with string type", () => {
+    it("should match good requests with string type", () => {
         const request: RequestT = { path: "/John?desc=true" }
         const Validator: ParamT = "/:username(string)"
         const consumed = ParamValidator.consume(request, Validator)
@@ -45,7 +45,7 @@ describe("URL Param validator", () => {
         })
     })
 
-    it("should consume matching requests with boolean type", () => {
+    it("should match good requests with boolean type", () => {
         const request: RequestT = { path: "/true?desc=true" }
         const Validator: ParamT = "/:safe(boolean)"
         const consumed = ParamValidator.consume(request, Validator)
@@ -57,7 +57,7 @@ describe("URL Param validator", () => {
         })
     })
 
-    it("should consume non matching requests", () => {
+    it("should not match bad requests", () => {
         expect(
             ParamValidator.consume({ path: "/posts" }, "/news").healthy
         ).toBeFalsy()
@@ -67,5 +67,11 @@ describe("URL Param validator", () => {
         expect(
             ParamValidator.consume({ path: "/:safe(boolean)" }, "/news").healthy
         ).toBeFalsy()
+    })
+
+    it("should generate from data", () => {
+        expect(
+            ParamValidator.format({ id: 3 }, "/:id(number)", { path: "/posts" })
+        ).toEqual({ path: "/posts/3" })
     })
 })

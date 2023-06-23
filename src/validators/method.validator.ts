@@ -31,4 +31,9 @@ export const MethodValidator: ValidatorI<MethodT> = {
             healthy: false,
         }
     },
+    format(data, matcher, response) {
+        const firstMethod = matcher.split(",")[0] //prefer the first matching method
+
+        return { ...response, method: firstMethod }
+    },
 }

@@ -1,4 +1,7 @@
 import { RequestT } from "../common/request"
+import { ConsumedResponse } from "../common/response"
+import { Matcher } from "../matchers"
+import { authRegistry } from "../matchers/auth"
 import { BodyT, bodyRegistry } from "../matchers/body"
 import isBodyT from "../narrowers/isBodyT"
 import { returnObject } from "../returnObjects"
@@ -48,5 +51,9 @@ export const BodyValidator: ValidatorI<BodyT<any>> = {
             consumed: { body: {} } as returnObject<BR, any, typeof validator>,
             healthy: false,
         }
+    },
+    format(data, matcher, response) {
+        const { body } = data
+        return { ...response, body }
     },
 }

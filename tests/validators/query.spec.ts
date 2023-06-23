@@ -7,7 +7,7 @@ describe("QueryValidator", () => {
         expect(QueryValidator.is("/homepage")).toBeFalsy()
     })
 
-    it("should consume matching paths with boolean type", () => {
+    it("should match good requests with boolean type", () => {
         const validator = "?desc=boolean!&allowAdult=boolean"
         const validation = QueryValidator.consume(
             { path: "/posts?desc=true" },
@@ -21,7 +21,7 @@ describe("QueryValidator", () => {
         })
     })
 
-    it("should consume matching paths with number type", () => {
+    it("should match good requests with number type", () => {
         const validator = "?page=number!&allowAdult=boolean"
         const validation = QueryValidator.consume(
             { path: "/posts?page=3" },
@@ -35,7 +35,7 @@ describe("QueryValidator", () => {
         })
     })
 
-    it("should consume matching paths with string type", () => {
+    it("should match good requests with string type", () => {
         const validator = "?from=string!&allowAdult=boolean"
         const validation = QueryValidator.consume(
             { path: "/posts?from=2020-16-3" },
@@ -49,7 +49,7 @@ describe("QueryValidator", () => {
         })
     })
 
-    it("should consume non matching paths", () => {
+    it("should not match bad requests", () => {
         expect(
             QueryValidator.consume(
                 { path: "/news/today" },
@@ -62,5 +62,15 @@ describe("QueryValidator", () => {
                 "?locale=string!&desc=boolean"
             ).healthy
         ).toBeFalsy()
+    })
+
+    it("should generate from data", () => {
+        expect(
+            QueryValidator.format(
+                { locale: "en-US", desc: true },
+                "?locale=string!&desc=boolean",
+                { path: "/posts/4" }
+            )
+        ).toEqual({ path: "/posts/4?locale=en-US&desc=true" })
     })
 })

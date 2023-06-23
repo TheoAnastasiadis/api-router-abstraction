@@ -1,19 +1,15 @@
-export type ValidatorWrapper<T> = {
-    _tag: "validator"
+//utility types for easy runtime differentiation
+
+export type TaggedMatcher<T> = {
+    _tag: "Matcher"
     value: T
 }
 
-export type LabelWrapper<T> = {
-    _tag: "label"
+export type TaggedController<
+    T,
+    L extends string | undefined = string | undefined
+> = {
+    _tag: "Controller"
+    label: L
     value: T
 }
-
-export type ControllerWrapper<T> = {
-    _tag: "validator"
-    value: T
-}
-
-export type Wrapped<T> =
-    | ValidatorWrapper<T>
-    | LabelWrapper<T>
-    | ControllerWrapper<T>

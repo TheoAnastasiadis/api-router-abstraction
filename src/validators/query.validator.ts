@@ -2,6 +2,7 @@ import { RequestT } from "../common/request"
 import { QueryT } from "../matchers/query"
 import isQueryT from "../narrowers/isQueryT"
 import { ValidatorI } from "./validator.interface"
+import * as _ from "lodash"
 
 export const QueryValidator: ValidatorI<QueryT> = {
     is: isQueryT,
@@ -51,5 +52,18 @@ export const QueryValidator: ValidatorI<QueryT> = {
             consumed,
             healthy: true,
         }
+    },
+    format(data, matcher, response) {
+        let { path } = response
+        const names = Array.from(new URLSearchParams(matcher).entries()).map(
+            ([name, value]) => name
+        )
+        const values = names.map((name) => data[name])
+        const queryString = new URLSearchParams(
+            Object.fromEntries(_.zip(names, values))
+        ).toString()
+        path = `${path}?${queryString}`
+
+        return { ...response, path }
     },
 }

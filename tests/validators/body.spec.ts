@@ -1,5 +1,6 @@
 import { RequestT } from "../../src/common/request"
-import { bodyRegistry } from "../../src/matchers/body"
+import { ConsumedResponse } from "../../src/common/response"
+import { BodyT, bodyRegistry } from "../../src/matchers/body"
 import { BodyValidator } from "../../src/validators/body.validator"
 import * as t from "io-ts"
 
@@ -18,7 +19,7 @@ describe("BodyValidator", () => {
         expect(BodyValidator.is("user_body", bodyRegistry)).toBeFalsy()
     })
 
-    it("should consume good requests", () => {
+    it("should match good requests", () => {
         const body = {
             id: 3,
             author: "John Doe",
@@ -38,7 +39,7 @@ describe("BodyValidator", () => {
         })
     })
 
-    it("should consume bad requests", () => {
+    it("should not match bad requests", () => {
         const body = {
             userName: "johnDoe",
             age: "99",
@@ -54,6 +55,29 @@ describe("BodyValidator", () => {
             ...request,
             consumed: { body: {} },
             healthy: false,
+        })
+    })
+
+    it("should generate from data", () => {
+        const response: ConsumedResponse = {
+            path: "",
+        }
+
+        const body = {
+            userName: "johnDoe",
+            age: "99",
+            email: "john@doe.com",
+        } as const
+
+        const result = BodyValidator.format({ body }, "post_body", response)
+
+        expect(result).toEqual({
+            path: "",
+            body: {
+                userName: "johnDoe",
+                age: "99",
+                email: "john@doe.com",
+            },
         })
     })
 })

@@ -5,20 +5,27 @@ import { altValidate } from "./altValidate"
 import { chainValidate } from "./chainValidate"
 import { ConsumedRequest, RequestT } from "../common/request"
 import * as _ from "lodash"
-import { Wrapped } from "../common/wrappers"
+import { TaggedController, TaggedMatcher } from "../common/wrappers"
 /**
  * Recursivelly consume route applying either chain or alt validation.
  */
 export function consumeRoute<BR extends bodyRegistry, AR extends authRegistry>(
     request: RequestT,
-    validators: _.RecursiveArray<Wrapped<any>>,
+    validators: _.RecursiveArray<
+        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
+    >,
     bodyRegistry: BR,
     authRegistry: AR
 ): object | false {
     //helpers
     function isValue(
-        a: Wrapped<any> | _.RecursiveArray<Wrapped<any>>
-    ): a is Wrapped<any> {
+        a:
+            | TaggedMatcher<Matcher<BR, AR>>
+            | TaggedController<any>
+            | _.RecursiveArray<
+                  TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
+              >
+    ): a is TaggedMatcher<Matcher<BR, AR>> | TaggedController<any> {
         return !Array.isArray(a)
     }
     function concatValidations<A, B>(
@@ -29,7 +36,9 @@ export function consumeRoute<BR extends bodyRegistry, AR extends authRegistry>(
     }
 
     //initialization
-    let level: _.RecursiveArray<Wrapped<any>> = validators
+    let level: _.RecursiveArray<
+        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
+    > = validators
     let crntIdx: number = 0
     let validation: ConsumedRequest<object> = {
         ...request,
@@ -42,7 +51,9 @@ export function consumeRoute<BR extends bodyRegistry, AR extends authRegistry>(
         if (isValue(level[crntIdx])) {
             const { consumedRequest, nextIdx } = chainValidate(
                 validation,
-                level[crntIdx] as Wrapped<any>,
+                level[crntIdx] as
+                    | TaggedMatcher<Matcher<BR, AR>>
+                    | TaggedController<any>,
                 bodyRegistry,
                 authRegistry,
                 crntIdx
@@ -52,7 +63,9 @@ export function consumeRoute<BR extends bodyRegistry, AR extends authRegistry>(
         } else {
             const { consumedRequest, nextIdx, newLevel } = altValidate(
                 validation,
-                level[crntIdx] as _.RecursiveArray<Wrapped<any>>,
+                level[crntIdx] as _.RecursiveArray<
+                    TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
+                >,
                 bodyRegistry,
                 authRegistry,
                 crntIdx

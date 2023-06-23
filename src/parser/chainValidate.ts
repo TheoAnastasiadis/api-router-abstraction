@@ -2,7 +2,8 @@ import { authRegistry } from "../matchers/auth"
 import { bodyRegistry } from "../matchers/body"
 import { ConsumedRequest, RequestT } from "../common/request"
 import { validate } from "./validation"
-import { Wrapped } from "../common/wrappers"
+import { TaggedMatcher, TaggedController } from "../common/wrappers"
+import { Matcher } from "../matchers"
 
 export function chainValidate<
     BR extends bodyRegistry,
@@ -10,14 +11,14 @@ export function chainValidate<
     T
 >(
     previousValidation: ConsumedRequest<T>,
-    validator: Wrapped<any>,
+    validator: TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>,
     bodyRegistry: BR,
     authRegistry: AR,
     crntIdx: number
 ): { consumedRequest: ConsumedRequest<T>; nextIdx: number } {
     let newValidation: ConsumedRequest<T>
 
-    if (validator._tag !== "validator")
+    if (validator._tag !== "Matcher")
         return { consumedRequest: previousValidation, nextIdx: crntIdx + 1 }
 
     switch (previousValidation.healthy) {

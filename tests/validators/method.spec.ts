@@ -7,7 +7,7 @@ describe("MethodVaidator", () => {
         expect(MethodValidator.is("/posts/:username(string)")).toBeFalsy()
     })
 
-    it("should consume good requests", () => {
+    it("should match good requests", () => {
         expect(
             MethodValidator.consume({ path: "/posts", method: "GET" }, "GET")
         ).toEqual({
@@ -29,7 +29,7 @@ describe("MethodVaidator", () => {
         })
     })
 
-    it("should consume bad requests", () => {
+    it("should not match bad requests", () => {
         expect(
             MethodValidator.consume(
                 { path: "/posts?soft=true", method: "POST" },
@@ -40,6 +40,13 @@ describe("MethodVaidator", () => {
             method: "POST",
             consumed: {},
             healthy: false,
+        })
+    })
+
+    it("should generate from data", () => {
+        expect(MethodValidator.format({}, "POST,PUT", { path: "" })).toEqual({
+            path: "",
+            method: "POST",
         })
     })
 })

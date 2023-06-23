@@ -1,25 +1,17 @@
 import { ParserI } from "./common/parser"
 import { consumeRoute } from "./parser/consume"
 import { RequestT } from "./common/request"
-import { Validator } from "./validators"
+import { Matcher } from "./matchers"
 import { authRegistry } from "./matchers/auth"
-import { bodyRegistry } from "./validators/body"
+import { bodyRegistry } from "./matchers/body"
 import createDesign from "./design"
 import * as _ from "lodash"
-import {
-    ControllerWrapper,
-    LabelWrapper,
-    ValidatorWrapper,
-    Wrapped,
-} from "./common/wrappers"
+import { TaggedController, TaggedMatcher } from "./common/wrappers"
 
 export class RouterGenerator<BR extends bodyRegistry, AR extends authRegistry> {
-    private validators: _.RecursiveArray<
-        | ValidatorWrapper<Validator<BR, AR>>
-        | LabelWrapper<any>
-        | ControllerWrapper<any>
+    private matchers: _.RecursiveArray<
+        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
     > = []
-    private labels: any[] = []
     private bodyRegistry: BR
     private authRegistry: AR
     public constructor(config: { bodyRegistry: BR; authRegistry: AR }) {
@@ -29,7 +21,7 @@ export class RouterGenerator<BR extends bodyRegistry, AR extends authRegistry> {
     parse(request: RequestT) {
         return consumeRoute(
             request,
-            this.validators,
+            this.matchers,
             this.bodyRegistry,
             this.authRegistry
         )
@@ -38,13 +30,13 @@ export class RouterGenerator<BR extends bodyRegistry, AR extends authRegistry> {
         return createDesign.withConfig(this.bodyRegistry, this.authRegistry)
     }
     fromSchema(schema: ParserI<any, Record<any, never>>) {
-        this.validators = schema._consumed
+        this.matchers = schema._consumed
 
         const instance = new RouterGenerator({
             bodyRegistry: this.bodyRegistry,
             authRegistry: this.authRegistry,
         })
-        instance.validators = schema._consumed
+        instance.matchers = schema._consumed
         return instance
     }
 }

@@ -3,17 +3,18 @@ import { ParamT } from "../matchers/param"
 import isParamT from "../narrowers/isParamT"
 import { returnObject } from "../returnObjects"
 import { ValidatorI } from "./validator.interface"
+import * as _ from "lodash"
+
+//helpers
+function hasType(
+    v: ParamT
+): v is `/:${string}(${"string" | "number" | "boolean"})` {
+    return v.startsWith("/:")
+}
 
 export const ParamValidator: ValidatorI<ParamT> = {
     is: isParamT,
     consume: (request: RequestT, validator: ParamT) => {
-        //helpers
-        function hasType(
-            v: ParamT
-        ): v is `/:${string}(${"string" | "number" | "boolean"})` {
-            return validator.startsWith("/:")
-        }
-
         //parse path info
         const { path } = request
         const { element, rest } = path.match(
@@ -57,5 +58,20 @@ export const ParamValidator: ValidatorI<ParamT> = {
             const healthy = element == name
             return { ...request, path: rest, consumed: {}, healthy }
         }
+    },
+    format(data, matcher, response) {
+        let { path } = response
+
+        if (hasType(matcher as ParamT)) {
+            const { name } = matcher.match(/\/:(?<name>.*?)\(/)?.groups || {
+                name: undefined,
+            }
+
+            if (!name) throw new TypeError(`Invalid ParamT matcher: ${matcher}`)
+
+            const value = _.get(data, name)
+            return { ...response, path: `${path}/${value}` }
+        }
+        return { ...response, path: `${path}${matcher}` }
     },
 }

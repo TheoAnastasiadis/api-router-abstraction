@@ -4,7 +4,7 @@ import { bodyRegistry } from "../../src/matchers/body"
 import { authRegistry } from "../../src/matchers/auth"
 import { Matcher } from "../../src/matchers"
 import * as _ from "lodash"
-import { ValidatorWrapper } from "../../src/common/wrappers"
+import { TaggedMatcher } from "../../src/common/wrappers"
 
 describe("chainValidate", () => {
     const request: RequestT = {
@@ -18,13 +18,13 @@ describe("chainValidate", () => {
 
     it("consumes matching requests", () => {
         const validators: _.RecursiveArray<
-            ValidatorWrapper<Matcher<typeof bodyRegistry, typeof authRegistry>>
+            TaggedMatcher<Matcher<typeof bodyRegistry, typeof authRegistry>>
         > = [
             [
-                { _tag: "validator", value: "/posts" },
-                { _tag: "validator", value: "/:id(number)" },
+                { _tag: "Matcher", value: "/posts" },
+                { _tag: "Matcher", value: "/:id(number)" },
             ],
-            { _tag: "validator", value: "?desc=boolean!" },
+            { _tag: "Matcher", value: "?desc=boolean!" },
         ]
         const result1 = altValidate(
             previousValidation,
@@ -47,10 +47,10 @@ describe("chainValidate", () => {
 
     it("consumes non matching requests", () => {
         const validators: _.RecursiveArray<
-            ValidatorWrapper<Matcher<typeof bodyRegistry, typeof authRegistry>>
+            TaggedMatcher<Matcher<typeof bodyRegistry, typeof authRegistry>>
         > = [
-            { _tag: "validator", value: "/news" },
-            { _tag: "validator", value: "?trending=boolean!" },
+            { _tag: "Matcher", value: "/news" },
+            { _tag: "Matcher", value: "?trending=boolean!" },
         ]
         const result1 = altValidate(
             previousValidation,

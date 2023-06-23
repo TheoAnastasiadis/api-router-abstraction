@@ -1,10 +1,10 @@
-import { ParserI, createParser } from "../common/parser"
-import { Wrapped, ValidatorWrapper } from "../common/wrappers"
+import { ParserI } from "../common/parser"
 import * as _ from "lodash"
 import { Matcher } from "../matchers"
 import { authRegistry } from "../matchers/auth"
 import { bodyRegistry } from "../matchers/body"
 import { combine, returnObject } from "../returnObjects"
+import { TaggedController, TaggedMatcher } from "../common/wrappers"
 
 export const chain = {
     withConfig<BR extends bodyRegistry, AR extends authRegistry>(
@@ -14,31 +14,27 @@ export const chain = {
         function chain<
             const K extends Matcher<BR, AR>,
             const P extends Record<string, any>,
-            const C extends _.RecursiveArray<Wrapped<any>>
+            const C extends [
+                TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>,
+                ...any[]
+            ]
         >(
             child: Record<K, ParserI<C, combine<[P, returnObject<BR, AR, K>]>>>
         ): ParserI<
-            [ValidatorWrapper<K>, ...C],
+            readonly [TaggedMatcher<K>, ...C],
             keyof returnObject<BR, AR, K> extends never
                 ? P
-                : Omit<P, keyof returnObject<BR, AR, K>>,
-            boolean
+                : Omit<P, keyof returnObject<BR, AR, K>>
         > {
-            const validator = Object.keys(child)[0] as keyof typeof child
-            const consumed = child[validator]._consumed
+            const matcher = Object.keys(child)[0] as keyof typeof child
+            const consumed = child[matcher]._consumed
 
-            return createParser(
-                [{ _tag: "validator", value: validator }, ...consumed],
-                {} as keyof returnObject<BR, AR, K> extends never
+            return {
+                _consumed: [{ _tag: "Matcher", value: matcher }, ...consumed],
+                _pending: {} as keyof returnObject<BR, AR, K> extends never
                     ? P
-                    : Omit<P, keyof returnObject<BR, AR, K>> //this exists only at compile time
-            ) as ParserI<
-                [ValidatorWrapper<K>, ...C],
-                keyof returnObject<BR, AR, K> extends never
-                    ? P
-                    : Omit<P, keyof returnObject<BR, AR, K>>,
-                boolean
-            >
+                    : Omit<P, keyof returnObject<BR, AR, K>>, //this exists only at compile time
+            }
         }
 
         const c = chain

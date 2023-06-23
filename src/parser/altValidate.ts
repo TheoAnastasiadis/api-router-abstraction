@@ -3,7 +3,8 @@ import { bodyRegistry } from "../matchers/body"
 import { ConsumedRequest } from "../common/request"
 import { validate } from "./validation"
 import * as _ from "lodash"
-import { Wrapped } from "../common/wrappers"
+import { TaggedMatcher, TaggedController } from "../common/wrappers"
+import { Matcher } from "../matchers"
 
 export function altValidate<
     BR extends bodyRegistry,
@@ -11,14 +12,18 @@ export function altValidate<
     T
 >(
     previousValidation: ConsumedRequest<T>,
-    validators: _.RecursiveArray<Wrapped<any>>,
+    validators: _.RecursiveArray<
+        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
+    >,
     bodyRegistry: BR,
     authRegistry: AR,
     crntIdx: number
 ): {
     consumedRequest: ConsumedRequest<T>
     nextIdx: number
-    newLevel: _.RecursiveArray<Wrapped<any>>
+    newLevel: _.RecursiveArray<
+        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
+    >
 } {
     //helper
     function collapse<A>(a: A | _.RecursiveArray<A>): A {
@@ -29,7 +34,7 @@ export function altValidate<
     if (previousValidation.healthy) {
         const relevantValidators = validators.map(collapse)
         for (const idx in relevantValidators) {
-            if (relevantValidators[idx]._tag !== "validator")
+            if (relevantValidators[idx]._tag !== "Matcher")
                 return {
                     consumedRequest: { ...previousValidation, healthy: true },
                     nextIdx: crntIdx + 1,
@@ -45,7 +50,10 @@ export function altValidate<
                     consumedRequest: newValidation,
                     nextIdx: 1,
                     newLevel: Array.isArray(validators[idx])
-                        ? (validators[idx] as _.RecursiveArray<Wrapped<any>>)
+                        ? (validators[idx] as _.RecursiveArray<
+                              | TaggedMatcher<Matcher<BR, AR>>
+                              | TaggedController<any>
+                          >)
                         : validators,
                 }
 
@@ -64,6 +72,3 @@ export function altValidate<
         newLevel: validators,
     }
 }
-
-// [  <>  ,  [   <>  ,  <>  ]  ]
-// [  <>  ,  <*>  ]
