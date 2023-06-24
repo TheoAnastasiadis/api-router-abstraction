@@ -1,4 +1,4 @@
-//utility types for easy runtime differentiation
+//utility wrappers for easy runtime differentiation
 
 export type TaggedMatcher<T> = {
     _tag: "Matcher"

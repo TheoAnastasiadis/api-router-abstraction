@@ -11,9 +11,11 @@ import { TaggedController, TaggedMatcher } from "../common/wrappers"
  */
 export function consumeRoute<BR extends bodyRegistry, AR extends authRegistry>(
     request: RequestT,
-    validators: _.RecursiveArray<
-        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
-    >,
+    validators: readonly [
+        ..._.RecursiveArray<
+            TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
+        >
+    ],
     bodyRegistry: BR,
     authRegistry: AR
 ): object | false {
@@ -36,9 +38,7 @@ export function consumeRoute<BR extends bodyRegistry, AR extends authRegistry>(
     }
 
     //initialization
-    let level: _.RecursiveArray<
-        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
-    > = validators
+    let level = validators
     let crntIdx: number = 0
     let validation: ConsumedRequest<object> = {
         ...request,

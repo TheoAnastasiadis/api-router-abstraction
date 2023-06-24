@@ -7,21 +7,22 @@ import { altFormat } from "./altFormat"
 import { chainFormat } from "./chainFormat"
 
 /**
- * Recursivelly consume route applying either chain or alt validation.
+ * Recursivelly consume route applying either chain or alt formatting.
  */
 export function consumeFormatters<
     BR extends bodyRegistry,
     AR extends authRegistry
 >(
-    response: ConsumedResponse,
-    validators: _.RecursiveArray<
-        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
-    >,
+    validators: readonly [
+        ..._.RecursiveArray<
+            TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
+        >
+    ],
     data: Record<string, any>,
     target: string,
     bodyRegistry: BR,
     authRegistry: AR
-): object | false {
+): ConsumedResponse {
     //helpers
     function isValue(
         a:
@@ -35,12 +36,10 @@ export function consumeFormatters<
     }
 
     //initialization
-    let level: _.RecursiveArray<
-        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
-    > = validators
+    let level = validators
     let crntIdx: number = 0
     let formatting: ConsumedResponse = {
-        ...response,
+        path: "",
     }
 
     //loop

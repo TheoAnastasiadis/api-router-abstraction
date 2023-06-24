@@ -5,7 +5,7 @@ import * as _ from "lodash"
  * Interface for objects that represent route parsers.
  * Routes are consumed from P to C.
  */
-export interface ParserI<C extends readonly [any, ...any[]], P> {
+export interface ParserI<C extends Readonly<[..._.RecursiveArray<any>]>, P> {
     _consumed: C
     _pending: P
 }

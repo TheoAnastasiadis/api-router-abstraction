@@ -10,9 +10,9 @@ import { TaggedController } from "../common/wrappers"
  * const getPostById = (args: {id: number}) => Promise.resolve(...);
  * const parser = controller(getPostById); //ParserI<[],{id:number},[]>
  */
-export function controller<const P>(
+export function controller<const P, const L extends string | undefined>(
     fa: (args: P) => any,
-    label?: string
+    label?: L
 ): ParserI<[TaggedController<typeof fa, typeof label>], Readonly<P>> {
     return {
         _consumed: [{ _tag: "Controller", value: fa, label }],

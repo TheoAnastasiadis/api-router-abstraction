@@ -14,10 +14,9 @@ export const chain = {
         function chain<
             const K extends Matcher<BR, AR>,
             const P extends Record<string, any>,
-            const C extends [
-                TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>,
-                ...any[]
-            ]
+            const C extends _.RecursiveArray<
+                TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
+            >
         >(
             child: Record<K, ParserI<C, combine<[P, returnObject<BR, AR, K>]>>>
         ): ParserI<

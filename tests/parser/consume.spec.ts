@@ -1,4 +1,4 @@
-import { consumeRoute } from "../../src/parser/consume"
+import { consumeRoute } from "../../src/parser"
 import { Matcher } from "../../src/matchers"
 import { bodyRegistry } from "../../src/matchers/body"
 import { authRegistry } from "../../src/matchers/auth"
