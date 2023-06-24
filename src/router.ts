@@ -4,6 +4,7 @@ import { RequestT } from "./common/request"
 import { Matcher } from "./matchers"
 import { authRegistry } from "./matchers/auth"
 import { bodyRegistry } from "./matchers/body"
+import { controllerRegistry, notYetImplemented } from "./design/controller"
 import createDesign from "./design"
 import * as _ from "lodash"
 import { TaggedController, TaggedMatcher } from "./common/wrappers"
@@ -33,9 +34,10 @@ type AppropriateLabels<V extends readonly any[]> = ExcludeFromTuple<
 >[number]["label"] &
     string
 
-export class RouterGenerator<
+class RouterGenerator<
     BR extends bodyRegistry,
     AR extends authRegistry,
+    CR extends controllerRegistry,
     V extends readonly [
         ..._.RecursiveArray<
             TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
@@ -45,21 +47,31 @@ export class RouterGenerator<
     private readonly validators: V
     private readonly bodyRegistry: BR
     private readonly authRegistry: AR
+    private readonly controllerRegistry: CR
+    private controllerImplementations?: {
+        [key in keyof CR]: (
+            args: Parameters<CR[key]>[number],
+            router: RouterGenerator<BR, AR, CR, V>
+        ) => any
+    }
     private constructor(
-        config: { bodyRegistry: BR; authRegistry: AR },
+        config: { bodyRegistry: BR; authRegistry: AR; controllerRegistry: CR },
         validators: V
     ) {
         this.bodyRegistry = config.bodyRegistry
         this.authRegistry = config.authRegistry
+        this.controllerRegistry = config.controllerRegistry
         this.validators = validators
     }
     public static withConfig<
         BR extends bodyRegistry,
-        AR extends authRegistry
+        AR extends authRegistry,
+        CR extends controllerRegistry
     >(config: {
         bodyRegistry: BR
         authRegistry: AR
-    }): RouterGenerator<BR, AR, []> {
+        controllerRegistry: CR
+    }): RouterGenerator<BR, AR, CR, []> {
         return new this(config, [])
     }
     parse(request: RequestT) {
@@ -70,9 +82,9 @@ export class RouterGenerator<
             this.authRegistry
         )
     }
-    format<const L extends AppropriateLabels<typeof this.validators>>(
-        target: L,
-        data: AppropriateData<L, typeof this.validators>
+    format<const L extends keyof typeof this.controllerRegistry>(
+        target: L & string,
+        data: AppropriateData<L & string, typeof this.validators>
     ) {
         return consumeFormatters(
             this.validators,
@@ -83,7 +95,11 @@ export class RouterGenerator<
         )
     }
     design() {
-        return createDesign.withConfig(this.bodyRegistry, this.authRegistry)
+        return createDesign.withConfig(
+            this.bodyRegistry,
+            this.authRegistry,
+            this.controllerRegistry
+        )
     }
     fromSchema<
         const C extends readonly [
@@ -91,22 +107,32 @@ export class RouterGenerator<
                 TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
             >
         ]
-    >(schema: ParserI<C, Record<any, never>>): RouterGenerator<BR, AR, C> {
+    >(schema: ParserI<C, Record<any, never>>): RouterGenerator<BR, AR, CR, C> {
         const instance = new RouterGenerator(
             {
                 bodyRegistry: this.bodyRegistry,
                 authRegistry: this.authRegistry,
+                controllerRegistry: this.controllerRegistry,
             },
             schema._consumed
         )
-        return instance as RouterGenerator<BR, AR, C>
+        return instance
+    }
+    registerImpl(implementations: typeof this.controllerImplementations) {
+        this.controllerImplementations = implementations
     }
 }
+
+export { notYetImplemented, RouterGenerator }
 
 // import * as t from "io-ts"
 // const generator = RouterGenerator.withConfig({
 //     bodyRegistry: {},
 //     authRegistry: {},
+//     controllerRegistry: {
+//         getPostById: (args: { id: number; name?: string }) => notYetImplemented,
+//         getPostsByType: (args: { type: string }) => notYetImplemented,
+//     },
 // })
 
 // const { c, f, a } = generator.design()
@@ -114,14 +140,21 @@ export class RouterGenerator<
 // const schema = c({
 //     "/posts": a(
 //         {
-//             "/:id(number)": f((args: { id: number }) => 3, "a"),
+//             "/:id(number)": c({
+//                 "?name=string": f("getPostById"),
+//             }),
 //         },
 //         {
-//             "/:type(string)": f((args: { type: string }) => 4, "b"),
+//             "/:type(string)": f("getPostsByType"),
 //         }
 //     ),
 // })
 
-// const router = generator.fromSchema(schema)
+// const Router = generator.fromSchema(schema)
 
-// router.format("b", { type: "34" })
+// Router.registerImpl({
+//     getPostById: (args, router) => 3,
+//     getPostsByType: (args, router) => 4,
+// })
+
+// Router.format("getPostById", { id: 3 })

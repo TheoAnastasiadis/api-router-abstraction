@@ -16,11 +16,11 @@ export const alt = {
             const K2 extends Matcher<BR, AR>,
             const P1 extends Record<string, any>,
             const P2 extends Record<string, any>,
-            const C1 extends [
+            const C1 extends readonly [
                 TaggedController<any> | TaggedMatcher<Matcher<BR, AR>>,
                 ...any[]
             ],
-            const C2 extends [
+            const C2 extends readonly [
                 TaggedController<any> | TaggedMatcher<Matcher<BR, AR>>,
                 ...any[]
             ]
