@@ -8,7 +8,30 @@ import createDesign from "./design"
 import * as _ from "lodash"
 import { TaggedController, TaggedMatcher } from "./common/wrappers"
 import { consumeFormatters } from "./formatter"
-import { ExcludeFromTuple, Flatten, PickFromTuple } from "./common/helperTypes"
+import {
+    ExcludeFromTuple,
+    Flatten,
+    PartialBy,
+    PickFromTuple,
+} from "./common/helperTypes"
+
+//helper types
+type AppropriateData<L extends string, V extends readonly any[]> = PartialBy<
+    Parameters<
+        PickFromTuple<
+            ExcludeFromTuple<Flatten<V>, TaggedMatcher<any>>,
+            TaggedController<any, L | undefined>
+        >[number]["value"]
+    >[number],
+    "body"
+> &
+    Record<string, any>
+
+type AppropriateLabels<V extends readonly any[]> = ExcludeFromTuple<
+    Flatten<V>,
+    TaggedMatcher<any>
+>[number]["label"] &
+    string
 
 export class RouterGenerator<
     BR extends bodyRegistry,
@@ -47,24 +70,9 @@ export class RouterGenerator<
             this.authRegistry
         )
     }
-    format<
-        const L extends ExcludeFromTuple<
-            Flatten<typeof this.validators>,
-            TaggedMatcher<any>
-        >[number]["label"] &
-            string
-    >(
+    format<const L extends AppropriateLabels<typeof this.validators>>(
         target: L,
-        data: Parameters<
-            PickFromTuple<
-                ExcludeFromTuple<
-                    Flatten<typeof this.validators>,
-                    TaggedMatcher<any>
-                >,
-                TaggedController<any, L | undefined>
-            >[number]["value"]
-        >[number] &
-            Record<string, any>
+        data: AppropriateData<L, typeof this.validators>
     ) {
         return consumeFormatters(
             this.validators,
@@ -95,25 +103,25 @@ export class RouterGenerator<
     }
 }
 
-import * as t from "io-ts"
-const generator = RouterGenerator.withConfig({
-    bodyRegistry: {},
-    authRegistry: {},
-})
+// import * as t from "io-ts"
+// const generator = RouterGenerator.withConfig({
+//     bodyRegistry: {},
+//     authRegistry: {},
+// })
 
-const { c, f, a } = generator.design()
+// const { c, f, a } = generator.design()
 
-const schema = c({
-    "/posts": a(
-        {
-            "/:id(number)": f((args: { id: number }) => 3, "a"),
-        },
-        {
-            "/:type(string)": f((args: { type: string }) => 4, "b"),
-        }
-    ),
-})
+// const schema = c({
+//     "/posts": a(
+//         {
+//             "/:id(number)": f((args: { id: number }) => 3, "a"),
+//         },
+//         {
+//             "/:type(string)": f((args: { type: string }) => 4, "b"),
+//         }
+//     ),
+// })
 
-const router = generator.fromSchema(schema)
+// const router = generator.fromSchema(schema)
 
-router.format("b", { type: "34" })
+// router.format("b", { type: "34" })

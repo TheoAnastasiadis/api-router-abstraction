@@ -25,3 +25,6 @@ export type PickFromTuple<T extends readonly any[], E> = T extends [
         ? [F, ...PickFromTuple<R, E>]
         : PickFromTuple<R, E>
     : []
+
+export type PartialBy<T, K extends string> = Omit<T, K> &
+    Partial<Pick<T, K & keyof T>>
