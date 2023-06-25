@@ -1,9 +1,9 @@
-import { ConsumedResponse } from "../common/response"
+import { ConsumedResponse } from "../common/response.consumed"
 import { Matcher } from "../matchers"
 import { authRegistry } from "../matchers/auth"
 import { bodyRegistry } from "../matchers/body"
 import { returnObject } from "../returnObjects"
-import { TaggedController, TaggedMatcher } from "../common/wrappers"
+import { TaggedController, TaggedMatcher } from "../common/tagged.types"
 import { format } from "./formatting"
 
 export function chainFormat<BR extends bodyRegistry, AR extends authRegistry>(

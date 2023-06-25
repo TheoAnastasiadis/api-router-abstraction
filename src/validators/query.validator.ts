@@ -1,4 +1,4 @@
-import { RequestT } from "../common/request"
+import { ParsingErrors, RequestT } from "../common/request.consumed"
 import { QueryT } from "../matchers/query"
 import isQueryT from "../narrowers/isQueryT"
 import { ValidatorI } from "./validator.interface"
@@ -15,7 +15,12 @@ export const QueryValidator: ValidatorI<QueryT> = {
         const expected = Array.from(new URLSearchParams(validator).entries())
 
         let consumed = {}
-        const unhealty = { ...request, consumed: {}, healthy: false }
+        const unhealty = {
+            ...request,
+            consumed: {},
+            healthy: false,
+            error: ParsingErrors.QUERY_ERROR,
+        }
         const isMandatory = (value: string) => value.includes("!")
 
         for (const param of expected) {

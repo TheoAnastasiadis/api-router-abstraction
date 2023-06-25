@@ -1,4 +1,4 @@
-import { RequestT } from "../common/request"
+import { ParsingErrors, RequestT } from "../common/request.consumed"
 import { ParamT } from "../matchers/param"
 import isParamT from "../narrowers/isParamT"
 import { returnObject } from "../returnObjects"
@@ -49,14 +49,42 @@ export const ParamValidator: ValidatorI<ParamT> = {
                     break
             }
 
-            return { ...request, path: rest, consumed, healthy }
+            switch (healthy) {
+                case true:
+                    return { ...request, path: rest, consumed, healthy }
+                    break
+
+                default:
+                    return {
+                        ...request,
+                        path: rest,
+                        consumed,
+                        healthy,
+                        error: ParsingErrors.PATH_ERROR,
+                    }
+                    break
+            }
         } else {
             // ex. "/posts"
             const { name } = validator.match(/\/(?<name>\w*)/)?.groups || {
                 name: "",
             }
             const healthy = element == name
-            return { ...request, path: rest, consumed: {}, healthy }
+            switch (healthy) {
+                case true:
+                    return { ...request, path: rest, consumed: {}, healthy }
+                    break
+
+                default:
+                    return {
+                        ...request,
+                        path: rest,
+                        consumed: {},
+                        healthy,
+                        error: ParsingErrors.PATH_ERROR,
+                    }
+                    break
+            }
         }
     },
     format(data, matcher, response) {

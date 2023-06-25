@@ -1,4 +1,4 @@
-import { RequestT } from "../common/request"
+import { RequestT } from "../common/request.consumed"
 
 /**
  * Method types. This will have to be mached to HTTP method names.

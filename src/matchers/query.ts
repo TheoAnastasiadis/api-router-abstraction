@@ -1,4 +1,4 @@
-import { ConsumedRequest, RequestT } from "../common/request"
+import { ConsumedRequest, RequestT } from "../common/request.consumed"
 
 //helpers
 type QueryParam = `${string}=${"string" | "number" | "boolean"}${"!" | ""}`

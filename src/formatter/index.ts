@@ -1,5 +1,5 @@
-import { ConsumedResponse } from "../common/response"
-import { TaggedMatcher, TaggedController } from "../common/wrappers"
+import { ConsumedResponse } from "../common/response.consumed"
+import { TaggedMatcher, TaggedController } from "../common/tagged.types"
 import { Matcher } from "../matchers"
 import { authRegistry } from "../matchers/auth"
 import { bodyRegistry } from "../matchers/body"
@@ -61,8 +61,7 @@ export function consumeFormatters<
             const { consumedResponse, nextIdx, newLevel } = altFormat(
                 formatting,
                 level[crntIdx] as _.RecursiveArray<
-                    | TaggedMatcher<Matcher<BR, AR>>
-                    | TaggedController<any, string>
+                    TaggedMatcher<Matcher<BR, AR>> | TaggedController<string>
                 >,
                 target
             )

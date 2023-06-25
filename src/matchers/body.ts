@@ -1,5 +1,5 @@
 import * as t from "io-ts"
-import { ConsumedRequest, RequestT } from "../common/request"
+import { ConsumedRequest, RequestT } from "../common/request.consumed"
 
 /**
  * Body contraints. These will be matched to body objects at runtimes using io-ts types. The name of a body parameter should be `{keyof bodyRegistry}_body`

@@ -1,4 +1,4 @@
-import { RequestT } from "../common/request"
+import { RequestT } from "../common/request.consumed"
 /**
  * Param validators. This will have to be mached to param literals in the path, and will append corresponding parameters to the controller.
  *

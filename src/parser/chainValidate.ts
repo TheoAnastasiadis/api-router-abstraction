@@ -1,8 +1,8 @@
 import { authRegistry } from "../matchers/auth"
 import { bodyRegistry } from "../matchers/body"
-import { ConsumedRequest, RequestT } from "../common/request"
+import { ConsumedRequest, RequestT } from "../common/request.consumed"
 import { validate } from "./validation"
-import { TaggedMatcher, TaggedController } from "../common/wrappers"
+import { TaggedMatcher, TaggedController } from "../common/tagged.types"
 import { Matcher } from "../matchers"
 
 export function chainValidate<
@@ -18,8 +18,15 @@ export function chainValidate<
 ): { consumedRequest: ConsumedRequest<T>; nextIdx: number } {
     let newValidation: ConsumedRequest<T>
 
-    if (validator._tag !== "Matcher")
-        return { consumedRequest: previousValidation, nextIdx: crntIdx + 1 }
+    if (validator._tag == "Controller")
+        return {
+            consumedRequest: {
+                ...previousValidation,
+                healthy: true,
+                controller: (validator as TaggedController).label,
+            },
+            nextIdx: crntIdx + 1,
+        }
 
     switch (previousValidation.healthy) {
         case true:

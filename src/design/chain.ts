@@ -1,10 +1,10 @@
-import { ParserI } from "../common/parser"
+import { ParserI } from "../common/parser.types"
 import * as _ from "lodash"
 import { Matcher } from "../matchers"
 import { authRegistry } from "../matchers/auth"
 import { bodyRegistry } from "../matchers/body"
 import { combine, returnObject } from "../returnObjects"
-import { TaggedController, TaggedMatcher } from "../common/wrappers"
+import { TaggedController, TaggedMatcher } from "../common/tagged.types"
 
 export const chain = {
     withConfig<BR extends bodyRegistry, AR extends authRegistry>(

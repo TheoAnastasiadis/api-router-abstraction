@@ -1,48 +1,49 @@
-import { ParserI } from "./common/parser"
+import { ParserI } from "./common/parser.types"
 import { consumeRoute } from "./parser"
-import { RequestT } from "./common/request"
+import { RequestT } from "./common/request.consumed"
 import { Matcher } from "./matchers"
 import { authRegistry } from "./matchers/auth"
 import { bodyRegistry } from "./matchers/body"
 import { controllerRegistry, notYetImplemented } from "./design/controller"
 import createDesign from "./design"
 import * as _ from "lodash"
-import { TaggedController, TaggedMatcher } from "./common/wrappers"
+import { TaggedController, TaggedMatcher } from "./common/tagged.types"
 import { consumeFormatters } from "./formatter"
 import {
     ExcludeFromTuple,
     Flatten,
     PartialBy,
     PickFromTuple,
-} from "./common/helperTypes"
+} from "./common/helper.types"
+import { AddapterI } from "./addapters/addapter.interface"
 
 //helper types
 type AppropriateData<L extends string, V extends readonly any[]> = PartialBy<
     Parameters<
         PickFromTuple<
             ExcludeFromTuple<Flatten<V>, TaggedMatcher<any>>,
-            TaggedController<any, L | undefined>
+            TaggedController<L | undefined>
         >[number]["value"]
     >[number],
     "body"
 > &
     Record<string, any>
 
-type AppropriateLabels<V extends readonly any[]> = ExcludeFromTuple<
-    Flatten<V>,
-    TaggedMatcher<any>
->[number]["label"] &
-    string
+type Validators<BR extends bodyRegistry, AR extends authRegistry> = readonly [
+    ..._.RecursiveArray<TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>>
+]
+
+type Config<
+    BR extends bodyRegistry,
+    AR extends authRegistry,
+    CR extends controllerRegistry
+> = { bodyRegistry: BR; authRegistry: AR; controllerRegistry: CR }
 
 class RouterGenerator<
     BR extends bodyRegistry,
     AR extends authRegistry,
     CR extends controllerRegistry,
-    V extends readonly [
-        ..._.RecursiveArray<
-            TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
-        >
-    ]
+    V extends Validators<BR, AR>
 > {
     private readonly validators: V
     private readonly bodyRegistry: BR
@@ -54,10 +55,8 @@ class RouterGenerator<
             router: RouterGenerator<BR, AR, CR, V>
         ) => any
     }
-    private constructor(
-        config: { bodyRegistry: BR; authRegistry: AR; controllerRegistry: CR },
-        validators: V
-    ) {
+    public addapters?: Record<string, AddapterI>
+    private constructor(config: Config<BR, AR, CR>, validators: V) {
         this.bodyRegistry = config.bodyRegistry
         this.authRegistry = config.authRegistry
         this.controllerRegistry = config.controllerRegistry
@@ -67,11 +66,7 @@ class RouterGenerator<
         BR extends bodyRegistry,
         AR extends authRegistry,
         CR extends controllerRegistry
-    >(config: {
-        bodyRegistry: BR
-        authRegistry: AR
-        controllerRegistry: CR
-    }): RouterGenerator<BR, AR, CR, []> {
+    >(config: Config<BR, AR, CR>): RouterGenerator<BR, AR, CR, []> {
         return new this(config, [])
     }
     parse(request: RequestT) {
@@ -101,13 +96,9 @@ class RouterGenerator<
             this.controllerRegistry
         )
     }
-    fromSchema<
-        const C extends readonly [
-            ..._.RecursiveArray<
-                TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
-            >
-        ]
-    >(schema: ParserI<C, Record<any, never>>): RouterGenerator<BR, AR, CR, C> {
+    fromSchema<const C extends Validators<BR, AR>>(
+        schema: ParserI<C, Record<any, never>>
+    ): RouterGenerator<BR, AR, CR, C> {
         const instance = new RouterGenerator(
             {
                 bodyRegistry: this.bodyRegistry,
@@ -130,8 +121,8 @@ export { notYetImplemented, RouterGenerator }
 //     bodyRegistry: {},
 //     authRegistry: {},
 //     controllerRegistry: {
-//         getPostById: (args: { id: number; name?: string }) => notYetImplemented,
-//         getPostsByType: (args: { type: string }) => notYetImplemented,
+//         getPostById: (args: { id: number; name?: string }) => notYetImplemented(),
+//         getPostsByType: (args: { type: string }) => notYetImplemented(),
 //     },
 // })
 

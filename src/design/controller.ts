@@ -1,13 +1,11 @@
-import { ParserI } from "../common/parser"
-import { TaggedController } from "../common/wrappers"
+import { ParserI } from "../common/parser.types"
+import { TaggedController } from "../common/tagged.types"
 
 export const notYetImplemented = () => {
     throw new Error("Functionality not yet implemented")
 }
 
-export type controllerRegistry = Readonly<
-    Record<string, (args: any) => typeof notYetImplemented>
->
+export type controllerRegistry = Readonly<Record<string, (args: any) => never>>
 
 /**
  * Helper function to create parsers from controllers.
@@ -23,11 +21,11 @@ export const controller = {
         function controller<K extends keyof CR>(
             key: K & string
         ): ParserI<
-            [TaggedController<CR[K], K & string>],
+            [TaggedController<K & string>],
             Readonly<Parameters<CR[K]>[number]>
         > {
             return {
-                _consumed: [{ _tag: "Controller", value: cr[key], label: key }],
+                _consumed: [{ _tag: "Controller", label: key }],
                 _pending: {} as Readonly<Parameters<CR[K]>[number]>, //The pending part of the parser doesn't exist at runtime.
             }
         }

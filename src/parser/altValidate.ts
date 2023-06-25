@@ -1,9 +1,9 @@
 import { authRegistry } from "../matchers/auth"
 import { bodyRegistry } from "../matchers/body"
-import { ConsumedRequest } from "../common/request"
+import { ConsumedRequest } from "../common/request.consumed"
 import { validate } from "./validation"
 import * as _ from "lodash"
-import { TaggedMatcher, TaggedController } from "../common/wrappers"
+import { TaggedMatcher, TaggedController } from "../common/tagged.types"
 import { Matcher } from "../matchers"
 
 export function altValidate<
@@ -34,15 +34,21 @@ export function altValidate<
     if (previousValidation.healthy) {
         const relevantValidators = validators.map(collapse)
         for (const idx in relevantValidators) {
-            if (relevantValidators[idx]._tag !== "Matcher")
+            if (relevantValidators[idx]._tag == "Controller")
                 return {
-                    consumedRequest: { ...previousValidation, healthy: true },
+                    consumedRequest: {
+                        ...previousValidation,
+                        healthy: true,
+                        controller: (
+                            relevantValidators[idx] as TaggedController
+                        ).label,
+                    },
                     nextIdx: crntIdx + 1,
                     newLevel: validators,
-                } // if the first element of the level is a Label or Controller, a healthy validation is returned.
+                } // if the first element of the level is a Controller, a healthy validation is returned.
 
             const newValidation = validate(previousValidation).with(
-                relevantValidators[idx].value,
+                (relevantValidators[idx] as TaggedMatcher<any>).value,
                 bodyRegistry
             )
             if (newValidation.healthy)
@@ -58,7 +64,11 @@ export function altValidate<
                 }
 
             return {
-                consumedRequest: { ...previousValidation, healthy: false },
+                consumedRequest: {
+                    ...previousValidation,
+                    healthy: false,
+                    error: newValidation.error,
+                },
                 nextIdx: crntIdx + 1,
                 newLevel: validators,
             }

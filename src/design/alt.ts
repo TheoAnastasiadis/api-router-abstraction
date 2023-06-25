@@ -2,9 +2,9 @@ import { Matcher } from "../matchers"
 import { authRegistry } from "../matchers/auth"
 import { bodyRegistry } from "../matchers/body"
 import { returnObject } from "../returnObjects"
-import { ParserI } from "../common/parser"
+import { ParserI } from "../common/parser.types"
 import * as _ from "lodash"
-import { TaggedController, TaggedMatcher } from "../common/wrappers"
+import { TaggedController, TaggedMatcher } from "../common/tagged.types"
 
 export const alt = {
     withConfig<BR extends bodyRegistry, AR extends authRegistry>(

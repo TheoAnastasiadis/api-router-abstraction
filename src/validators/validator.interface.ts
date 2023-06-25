@@ -1,5 +1,5 @@
-import { ConsumedRequest, RequestT } from "../common/request"
-import { ConsumedResponse } from "../common/response"
+import { ConsumedRequest, RequestT } from "../common/request.consumed"
+import { ConsumedResponse } from "../common/response.consumed"
 import { Matcher } from "../matchers"
 import { AuthT, authRegistry } from "../matchers/auth"
 import { BodyT, bodyRegistry } from "../matchers/body"

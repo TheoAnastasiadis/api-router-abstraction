@@ -1,5 +1,5 @@
-import { RequestT } from "../common/request"
-import { ConsumedResponse } from "../common/response"
+import { ParsingErrors, RequestT } from "../common/request.consumed"
+import { ConsumedResponse } from "../common/response.consumed"
 import { Matcher } from "../matchers"
 import { authRegistry } from "../matchers/auth"
 import { BodyT, bodyRegistry } from "../matchers/body"
@@ -16,7 +16,7 @@ export const BodyValidator: ValidatorI<BodyT<any>> = {
         bodyRegistry?: BR
     ) {
         if (typeof bodyRegistry == "undefined")
-            throw new TypeError("Argument `bodyregistry` must be provided")
+            throw new TypeError("Argument `bodyRegistry` must be provided")
 
         //request info
         const { body } = request
@@ -50,6 +50,7 @@ export const BodyValidator: ValidatorI<BodyT<any>> = {
             ...request,
             consumed: { body: {} } as returnObject<BR, any, typeof validator>,
             healthy: false,
+            error: ParsingErrors.BODY_ERROR,
         }
     },
     format(data, matcher, response) {

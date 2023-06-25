@@ -1,4 +1,4 @@
-import { ConsumedResponse } from "../common/response"
+import { ConsumedResponse } from "../common/response.consumed"
 import { Matcher } from "../matchers"
 import { bodyRegistry } from "../matchers/body"
 import { authRegistry } from "../matchers/auth"

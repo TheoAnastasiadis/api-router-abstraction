@@ -3,3 +3,5 @@ export type ConsumedResponse = {
     method?: string
     body?: object
 }
+
+export type ResponseT = ConsumedResponse
