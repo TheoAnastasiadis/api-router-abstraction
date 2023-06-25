@@ -40,7 +40,10 @@ export function altValidate<
                         ...previousValidation,
                         healthy: true,
                         controller: (
-                            relevantValidators[idx] as TaggedController
+                            relevantValidators[idx] as TaggedController<
+                                any,
+                                string
+                            >
                         ).label,
                     },
                     nextIdx: crntIdx + 1,

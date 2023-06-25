@@ -8,8 +8,10 @@ export type TaggedMatcher<T> = {
 }
 
 export type TaggedController<
+    T extends (args: any) => never,
     L extends string | undefined = string | undefined
 > = {
     _tag: "Controller"
     label: L
+    value: T
 }

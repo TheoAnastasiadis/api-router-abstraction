@@ -8,14 +8,14 @@ import { bodyRegistry } from "../matchers/body"
 export function altFormat<BR extends bodyRegistry, AR extends authRegistry, T>(
     previousFormatting: ConsumedResponse,
     validators: _.RecursiveArray<
-        TaggedMatcher<Matcher<BR, AR>> | TaggedController<string>
+        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any, string>
     >,
     target: string
 ): {
     consumedResponse: ConsumedResponse
     nextIdx: number
     newLevel: _.RecursiveArray<
-        TaggedMatcher<Matcher<BR, AR>> | TaggedController<string>
+        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any, string>
     >
 } {
     //helper

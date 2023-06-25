@@ -23,7 +23,11 @@ describe("consume route", () => {
                     { _tag: "Matcher", value: "/posts" },
                     { _tag: "Matcher", value: "/:id(number)" },
                     { _tag: "Matcher", value: "?incognito=boolean" },
-                    { _tag: "Controller", label: "getPostsById" },
+                    {
+                        _tag: "Controller",
+                        label: "getPostsById",
+                        value: () => {},
+                    },
                 ],
             ]
         const result = consumeRoute(

@@ -15,14 +15,13 @@ import {
     PartialBy,
     PickFromTuple,
 } from "./common/helper.types"
-import { AddapterI } from "./addapters/addapter.interface"
 
 //helper types
 type AppropriateData<L extends string, V extends readonly any[]> = PartialBy<
     Parameters<
         PickFromTuple<
             ExcludeFromTuple<Flatten<V>, TaggedMatcher<any>>,
-            TaggedController<L | undefined>
+            TaggedController<any, L | undefined>
         >[number]["value"]
     >[number],
     "body"
@@ -55,7 +54,6 @@ class RouterGenerator<
             router: RouterGenerator<BR, AR, CR, V>
         ) => any
     }
-    public addapters?: Record<string, AddapterI>
     private constructor(config: Config<BR, AR, CR>, validators: V) {
         this.bodyRegistry = config.bodyRegistry
         this.authRegistry = config.authRegistry
@@ -116,36 +114,37 @@ class RouterGenerator<
 
 export { notYetImplemented, RouterGenerator }
 
-// import * as t from "io-ts"
-// const generator = RouterGenerator.withConfig({
-//     bodyRegistry: {},
-//     authRegistry: {},
-//     controllerRegistry: {
-//         getPostById: (args: { id: number; name?: string }) => notYetImplemented(),
-//         getPostsByType: (args: { type: string }) => notYetImplemented(),
-//     },
-// })
+import * as t from "io-ts"
+const generator = RouterGenerator.withConfig({
+    bodyRegistry: {},
+    authRegistry: {},
+    controllerRegistry: {
+        getPostById: (args: { id: number; name?: string }) =>
+            notYetImplemented(),
+        getPostsByType: (args: { type: string }) => notYetImplemented(),
+    },
+})
 
-// const { c, f, a } = generator.design()
+const { c, f, a } = generator.design()
 
-// const schema = c({
-//     "/posts": a(
-//         {
-//             "/:id(number)": c({
-//                 "?name=string": f("getPostById"),
-//             }),
-//         },
-//         {
-//             "/:type(string)": f("getPostsByType"),
-//         }
-//     ),
-// })
+const schema = c({
+    "/posts": a(
+        {
+            "/:id(number)": c({
+                "?name=string": f("getPostById"),
+            }),
+        },
+        {
+            "/:type(string)": f("getPostsByType"),
+        }
+    ),
+})
 
-// const Router = generator.fromSchema(schema)
+const Router = generator.fromSchema(schema)
 
-// Router.registerImpl({
-//     getPostById: (args, router) => 3,
-//     getPostsByType: (args, router) => 4,
-// })
+Router.registerImpl({
+    getPostById: (args, router) => 3,
+    getPostsByType: (args, router) => 4,
+})
 
-// Router.format("getPostById", { id: 3 })
+Router.format("getPostById", { id: 3 })

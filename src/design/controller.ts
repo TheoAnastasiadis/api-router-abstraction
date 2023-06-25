@@ -21,11 +21,11 @@ export const controller = {
         function controller<K extends keyof CR>(
             key: K & string
         ): ParserI<
-            [TaggedController<K & string>],
+            [TaggedController<CR[K], K & string>],
             Readonly<Parameters<CR[K]>[number]>
         > {
             return {
-                _consumed: [{ _tag: "Controller", label: key }],
+                _consumed: [{ _tag: "Controller", label: key, value: cr[key] }],
                 _pending: {} as Readonly<Parameters<CR[K]>[number]>, //The pending part of the parser doesn't exist at runtime.
             }
         }

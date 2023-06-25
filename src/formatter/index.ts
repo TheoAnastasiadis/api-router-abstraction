@@ -61,7 +61,8 @@ export function consumeFormatters<
             const { consumedResponse, nextIdx, newLevel } = altFormat(
                 formatting,
                 level[crntIdx] as _.RecursiveArray<
-                    TaggedMatcher<Matcher<BR, AR>> | TaggedController<string>
+                    | TaggedMatcher<Matcher<BR, AR>>
+                    | TaggedController<any, string>
                 >,
                 target
             )

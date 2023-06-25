@@ -23,7 +23,7 @@ export function chainValidate<
             consumedRequest: {
                 ...previousValidation,
                 healthy: true,
-                controller: (validator as TaggedController).label,
+                controller: (validator as TaggedController<any, string>).label,
             },
             nextIdx: crntIdx + 1,
         }
