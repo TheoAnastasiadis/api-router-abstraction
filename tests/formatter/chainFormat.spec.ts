@@ -1,4 +1,4 @@
-import { TaggedMatcher } from "../../src/common/wrappers"
+import { TaggedMatcher } from "../../src/common/tagged.types"
 import { chainFormat } from "../../src/formatter/chainFormat"
 import { Matcher } from "../../src/matchers"
 

@@ -1,3 +1,4 @@
+import { ParsingErrors } from "../../src/common/request.consumed"
 import { MethodValidator } from "../../src/validators/method.validator"
 
 describe("MethodVaidator", () => {
@@ -40,6 +41,7 @@ describe("MethodVaidator", () => {
             method: "POST",
             consumed: {},
             healthy: false,
+            error: ParsingErrors.METHOD_ERROR,
         })
     })
 

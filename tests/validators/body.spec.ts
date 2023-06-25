@@ -1,5 +1,5 @@
-import { RequestT } from "../../src/common/request"
-import { ConsumedResponse } from "../../src/common/response"
+import { ParsingErrors, RequestT } from "../../src/common/request.consumed"
+import { ConsumedResponse } from "../../src/common/response.consumed"
 import { BodyT, bodyRegistry } from "../../src/matchers/body"
 import { BodyValidator } from "../../src/validators/body.validator"
 import * as t from "io-ts"
@@ -55,6 +55,7 @@ describe("BodyValidator", () => {
             ...request,
             consumed: { body: {} },
             healthy: false,
+            error: ParsingErrors.BODY_ERROR,
         })
     })
 

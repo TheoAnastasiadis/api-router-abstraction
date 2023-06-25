@@ -1,17 +1,21 @@
-import { RequestT } from "../../src/common/request"
+import { ParsingErrors, RequestT } from "../../src/common/request.consumed"
 import { altValidate } from "../../src/parser/altValidate"
 import { bodyRegistry } from "../../src/matchers/body"
 import { authRegistry } from "../../src/matchers/auth"
 import { Matcher } from "../../src/matchers"
 import * as _ from "lodash"
-import { TaggedMatcher } from "../../src/common/wrappers"
+import { TaggedMatcher } from "../../src/common/tagged.types"
 
 describe("chainValidate", () => {
     const request: RequestT = {
         path: "/posts/3?incognito=true",
         method: "GET",
     }
-    const previousValidation = { ...request, consumed: {}, healthy: true }
+    const previousValidation = {
+        ...request,
+        consumed: {},
+        healthy: true,
+    } as const
     const bodyRegistry: bodyRegistry = {}
     const authRegistry: authRegistry = {}
     const crntIdx = 0
@@ -65,6 +69,7 @@ describe("chainValidate", () => {
                 method: "GET",
                 consumed: {},
                 healthy: false,
+                error: ParsingErrors.PATH_ERROR,
             },
             newLevel: validators,
             nextIdx: 1,

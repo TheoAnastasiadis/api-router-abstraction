@@ -1,4 +1,4 @@
-import { RequestT } from "../../src/common/request"
+import { RequestT } from "../../src/common/request.consumed"
 import { ParamT } from "../../src/matchers/param"
 import { ParamValidator } from "../../src/validators/param.validator"
 
