@@ -84,9 +84,7 @@ describe("chainValidate", () => {
             consumedRequest: {
                 path: "?incognito=true",
                 method: "GET",
-                consumed: {
-                    onlyNew: false,
-                },
+                consumed: {},
                 healthy: false,
                 error: ParsingErrors.PATH_ERROR,
             },

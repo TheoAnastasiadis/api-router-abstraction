@@ -41,7 +41,6 @@ export const validate = <BR extends BodyRegistry>(
                     consumed: result.consumed,
                     healthy: true as const,
                 }
-                break
 
             default:
                 return {
@@ -52,7 +51,6 @@ export const validate = <BR extends BodyRegistry>(
                     healthy: false as const,
                     error: result.error,
                 }
-                break
         }
     },
 })

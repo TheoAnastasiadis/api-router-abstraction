@@ -31,20 +31,20 @@ export const ParamValidator: ValidatorI<ParamT> = {
             switch (type) {
                 case "number": // ex. "/:id(number)""
                     const num = Number(element)
-                    if (isNaN(num)) healthy = false
-                    else consumed = { [name]: num }
+                    healthy = !isNaN(num)
+                    if (healthy) consumed = { [name]: num }
                     break
 
                 case "boolean": // ex. "/:safe(boolean)""
                     const bool = element == "true"
-                    healthy = element == "true" || element == "false"
-                    consumed = { [name]: bool }
+                    healthy = ["true", "false"].includes(element)
+                    if (healthy) consumed = { [name]: bool }
                     break
 
                 default: // ex. "/:user(string)"
                     const str = element
                     healthy = str.length > 0
-                    consumed = { [name]: str }
+                    if (healthy) consumed = { [name]: str }
                     break
             }
 
@@ -56,7 +56,6 @@ export const ParamValidator: ValidatorI<ParamT> = {
                         consumed,
                         healthy,
                     }
-                    break
 
                 default:
                     return {
@@ -66,7 +65,6 @@ export const ParamValidator: ValidatorI<ParamT> = {
                         healthy,
                         error: ParsingErrors.PATH_ERROR,
                     }
-                    break
             }
         } else {
             // ex. "/posts"
@@ -75,7 +73,6 @@ export const ParamValidator: ValidatorI<ParamT> = {
             switch (healthy) {
                 case true:
                     return { ...request, path: rest, consumed: {}, healthy }
-                    break
 
                 default:
                     return {
@@ -85,7 +82,6 @@ export const ParamValidator: ValidatorI<ParamT> = {
                         healthy,
                         error: ParsingErrors.PATH_ERROR,
                     }
-                    break
             }
         }
     },
@@ -97,7 +93,10 @@ export const ParamValidator: ValidatorI<ParamT> = {
                 name: undefined,
             }
 
-            if (!name) throw new TypeError(`Invalid ParamT matcher: ${matcher}`)
+            if (!name)
+                /* istanbul ignore next */ throw new TypeError(
+                    `Invalid ParamT matcher: ${matcher}`
+                )
 
             const value = _.get(data, name)
             return { ...response, path: `${path}/${value}` }
