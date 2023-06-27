@@ -1,12 +1,12 @@
 import { ParamT } from "./param"
 import { MethodT } from "./method"
 import { QueryT } from "./query"
-import { BodyT, bodyRegistry } from "./body"
-import { AuthT, authRegistry } from "./auth"
+import { BodyT } from "./body"
+import { ControllerRegistry } from "../common/controllerRegistry.types"
+import { BodyRegistry } from "../common/bodyRegistry.types"
 
-export type Matcher<BR extends bodyRegistry, AR extends authRegistry> =
+export type Matcher<BR extends BodyRegistry> =
     | ParamT
     | MethodT
     | QueryT
     | BodyT<BR>
-    | AuthT<AR>

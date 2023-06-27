@@ -1,52 +1,52 @@
 import { Matcher } from "../matchers"
-import { authRegistry } from "../matchers/auth"
-import { bodyRegistry } from "../matchers/body"
 import { returnObject } from "../returnObjects"
 import { ParserI } from "../common/parser.types"
 import * as _ from "lodash"
 import { TaggedController, TaggedMatcher } from "../common/tagged.types"
+import { ControllerRegistry } from "../common/controllerRegistry.types"
+import { BodyRegistry } from "../common/bodyRegistry.types"
 
 export const alt = {
-    withConfig<BR extends bodyRegistry, AR extends authRegistry>(
-        br: BR,
-        ar: AR
-    ) {
+    withConfig<
+        const BR extends BodyRegistry,
+        const CR extends ControllerRegistry<BR>
+    >(cr: CR, br: BR) {
         function alt<
-            const K1 extends Matcher<BR, AR>,
-            const K2 extends Matcher<BR, AR>,
+            const K1 extends Matcher<BR>,
+            const K2 extends Matcher<BR>,
             const P1 extends Record<string, any>,
             const P2 extends Record<string, any>,
             const C1 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR, AR>>,
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
                 ...any[]
             ],
             const C2 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR, AR>>,
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
                 ...any[]
             ]
         >(
-            child1: Record<K1, ParserI<C1, P1 & returnObject<BR, AR, K1>>>,
-            child2: Record<K2, ParserI<C2, P2 & returnObject<BR, AR, K2>>>
+            child1: Record<K1, ParserI<C1, P1 & returnObject<BR, K1>>>,
+            child2: Record<K2, ParserI<C2, P2 & returnObject<BR, K2>>>
         ): ParserI<
             [[TaggedMatcher<K1>, ...C1], [TaggedMatcher<K2>, ...C2]],
-            | (keyof returnObject<BR, AR, K1> extends never
+            | (keyof returnObject<BR, K1> extends never
                   ? P1
-                  : Omit<P1, keyof returnObject<BR, AR, K1>>)
-            | (keyof returnObject<BR, AR, K2> extends never
+                  : Omit<P1, keyof returnObject<BR, K1>>)
+            | (keyof returnObject<BR, K2> extends never
                   ? P2
-                  : Omit<P2, keyof returnObject<BR, AR, K2>>)
+                  : Omit<P2, keyof returnObject<BR, K2>>)
         >
         function alt(
             ...children: [
-                Record<Matcher<BR, AR>, ParserI<any, any>>,
-                Record<Matcher<BR, AR>, ParserI<any, any>>,
-                ...Record<Matcher<BR, AR>, ParserI<any, any>>[]
+                Record<Matcher<BR>, ParserI<any, any>>,
+                Record<Matcher<BR>, ParserI<any, any>>,
+                ...Record<Matcher<BR>, ParserI<any, any>>[]
             ]
         ): ParserI<
             [
-                [TaggedMatcher<Matcher<BR, AR>>, ...any[]],
-                [TaggedMatcher<Matcher<BR, AR>>, ...any[]],
-                ...[TaggedMatcher<Matcher<BR, AR>>, ...any[]][]
+                [TaggedMatcher<Matcher<BR>>, ...any[]],
+                [TaggedMatcher<Matcher<BR>>, ...any[]],
+                ...[TaggedMatcher<Matcher<BR>>, ...any[]][]
             ],
             any
         > {
@@ -57,9 +57,9 @@ export const alt = {
                 { _tag: "Matcher", value: key },
                 ...alreadyConsumed[i],
             ]) as [
-                [TaggedMatcher<Matcher<BR, AR>>, ...any[]],
-                [TaggedMatcher<Matcher<BR, AR>>, ...any[]],
-                ...[TaggedMatcher<Matcher<BR, AR>>, ...any[]][]
+                [TaggedMatcher<Matcher<BR>>, ...any[]],
+                [TaggedMatcher<Matcher<BR>>, ...any[]],
+                ...[TaggedMatcher<Matcher<BR>>, ...any[]][]
             ]
             return {
                 _consumed: newConsumed,

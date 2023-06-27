@@ -1,5 +1,5 @@
+import { BodyRegistry } from "../../src/common/bodyRegistry.types"
 import { validate } from "../../src/parser/validation"
-import { bodyRegistry } from "../../src/matchers/body"
 import * as t from "io-ts"
 
 describe("validate function", () => {
@@ -13,12 +13,14 @@ describe("validate function", () => {
         },
     }
 
-    const br: bodyRegistry = {
-        user: t.type({
-            name: t.string,
-            surname: t.string,
-            age: t.number,
-        }),
+    const br: BodyRegistry = {
+        user: {
+            fields: t.type({
+                name: t.string,
+                surname: t.string,
+                age: t.number,
+            }),
+        },
     }
 
     const consumedRequest = { ...request, healthy: true, consumed: {} } as const

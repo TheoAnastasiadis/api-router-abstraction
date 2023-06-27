@@ -2,149 +2,136 @@ import { ParserI } from "./common/parser.types"
 import { consumeRoute } from "./parser"
 import { RequestT } from "./common/request.consumed"
 import { Matcher } from "./matchers"
-import { authRegistry } from "./matchers/auth"
-import { bodyRegistry } from "./matchers/body"
-import { controllerRegistry, notYetImplemented } from "./design/controller"
-import createDesign from "./design"
-import * as _ from "lodash"
 import { TaggedController, TaggedMatcher } from "./common/tagged.types"
 import { consumeFormatters } from "./formatter"
-import {
-    ExcludeFromTuple,
-    Flatten,
-    PartialBy,
-    PickFromTuple,
-} from "./common/helper.types"
+import { ControllerRegistry } from "./common/controllerRegistry.types"
+import createDesign from "./design"
+import * as t from "io-ts"
+import * as _ from "lodash"
+import { BodyRegistry } from "./common/bodyRegistry.types"
 
 //helper types
-type AppropriateData<L extends string, V extends readonly any[]> = PartialBy<
-    Parameters<
-        PickFromTuple<
-            ExcludeFromTuple<Flatten<V>, TaggedMatcher<any>>,
-            TaggedController<any, L | undefined>
-        >[number]["value"]
-    >[number],
-    "body"
-> &
-    Record<string, any>
-
-type Validators<BR extends bodyRegistry, AR extends authRegistry> = readonly [
-    ..._.RecursiveArray<TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>>
+type Validators<
+    BR extends BodyRegistry,
+    CR extends ControllerRegistry<BR>
+> = readonly [
+    ..._.RecursiveArray<TaggedMatcher<Matcher<BR>> | TaggedController<any>>
 ]
 
-type Config<
-    BR extends bodyRegistry,
-    AR extends authRegistry,
-    CR extends controllerRegistry
-> = { bodyRegistry: BR; authRegistry: AR; controllerRegistry: CR }
+type Config<CR extends ControllerRegistry<BR>, BR extends BodyRegistry> = {
+    controllerRegistry: CR
+    bodyRegistry: BR
+}
 
 class RouterGenerator<
-    BR extends bodyRegistry,
-    AR extends authRegistry,
-    CR extends controllerRegistry,
-    V extends Validators<BR, AR>
+    CR extends ControllerRegistry<BR>,
+    BR extends BodyRegistry
 > {
-    private readonly validators: V
-    private readonly bodyRegistry: BR
-    private readonly authRegistry: AR
+    private readonly validators: Validators<BR, CR>
     private readonly controllerRegistry: CR
-    private controllerImplementations?: {
-        [key in keyof CR]: (
-            args: Parameters<CR[key]>[number],
-            router: RouterGenerator<BR, AR, CR, V>
-        ) => any
-    }
-    private constructor(config: Config<BR, AR, CR>, validators: V) {
-        this.bodyRegistry = config.bodyRegistry
-        this.authRegistry = config.authRegistry
+    private readonly bodyRegistry: BR
+    private constructor(
+        config: Config<CR, BR>,
+        validators: Validators<BR, CR>
+    ) {
         this.controllerRegistry = config.controllerRegistry
+        this.bodyRegistry = config.bodyRegistry
         this.validators = validators
     }
     public static withConfig<
-        BR extends bodyRegistry,
-        AR extends authRegistry,
-        CR extends controllerRegistry
-    >(config: Config<BR, AR, CR>): RouterGenerator<BR, AR, CR, []> {
+        CR extends ControllerRegistry<BR>,
+        BR extends BodyRegistry
+    >(config: Config<CR, BR>): RouterGenerator<CR, BR> {
         return new this(config, [])
     }
     parse(request: RequestT) {
-        return consumeRoute(
-            request,
-            this.validators,
-            this.bodyRegistry,
-            this.authRegistry
-        )
+        return consumeRoute(request, this.validators, this.bodyRegistry)
     }
-    format<const L extends keyof typeof this.controllerRegistry>(
-        target: L & string,
-        data: AppropriateData<L & string, typeof this.validators>
+    format<const L extends keyof CR & string>(
+        target: L,
+        data: Readonly<
+            t.TypeOf<CR[L]["args"]> &
+                (keyof BR extends never
+                    ? object
+                    : CR[L]["body"] extends keyof BR
+                    ? { body: t.TypeOf<BR[CR[L]["body"]]["fields"]> }
+                    : object)
+        >
     ) {
         return consumeFormatters(
             this.validators,
             data,
             target,
-            this.bodyRegistry,
-            this.authRegistry
+            this.bodyRegistry
         )
     }
     design() {
         return createDesign.withConfig(
-            this.bodyRegistry,
-            this.authRegistry,
-            this.controllerRegistry
+            this.controllerRegistry,
+            this.bodyRegistry
         )
     }
-    fromSchema<const C extends Validators<BR, AR>>(
+    fromSchema<const C extends Validators<BR, CR>>(
         schema: ParserI<C, Record<any, never>>
-    ): RouterGenerator<BR, AR, CR, C> {
+    ): RouterGenerator<CR, BR> {
         const instance = new RouterGenerator(
             {
-                bodyRegistry: this.bodyRegistry,
-                authRegistry: this.authRegistry,
                 controllerRegistry: this.controllerRegistry,
+                bodyRegistry: this.bodyRegistry,
             },
             schema._consumed
         )
         return instance
     }
-    registerImpl(implementations: typeof this.controllerImplementations) {
-        this.controllerImplementations = implementations
-    }
 }
 
-export { notYetImplemented, RouterGenerator }
+export { RouterGenerator }
 
-import * as t from "io-ts"
 const generator = RouterGenerator.withConfig({
-    bodyRegistry: {},
-    authRegistry: {},
     controllerRegistry: {
-        getPostById: (args: { id: number; name?: string }) =>
-            notYetImplemented(),
-        getPostsByType: (args: { type: string }) => notYetImplemented(),
+        getPostsByAuthor: {
+            args: t.type({
+                name: t.string,
+                age: t.number,
+                trending: t.boolean,
+            }),
+            body: "post",
+        },
+    },
+    bodyRegistry: {
+        post: {
+            fields: t.type({
+                id: t.number,
+                content: t.string,
+            }),
+        },
     },
 })
 
 const { c, f, a } = generator.design()
 
 const schema = c({
-    "/posts": a(
-        {
-            "/:id(number)": c({
-                "?name=string": f("getPostById"),
+    "/:name(string)": c({
+        "?age=number": c({
+            "?trending=boolean!": c({
+                post_body: f("getPostsByAuthor"),
             }),
-        },
-        {
-            "/:type(string)": f("getPostsByType"),
-        }
-    ),
+        }),
+    }),
 })
 
-const Router = generator.fromSchema(schema)
+const router = generator.fromSchema(schema)
 
-Router.registerImpl({
-    getPostById: (args, router) => 3,
-    getPostsByType: (args, router) => 4,
+const result = router.parse({ path: "/posts/3?name=John" })
+
+// const impl = Router.getImplementation("getPostById")
+
+router.format("getPostsByAuthor", {
+    trending: true,
+    name: "2",
+    age: 2,
+    body: {
+        id: 5,
+        content: "Loram Ipsum",
+    },
 })
-
-Router.format("getPostById", { id: 3 })

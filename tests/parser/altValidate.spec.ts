@@ -1,10 +1,9 @@
 import { ParsingErrors, RequestT } from "../../src/common/request.consumed"
 import { altValidate } from "../../src/parser/altValidate"
-import { bodyRegistry } from "../../src/matchers/body"
-import { authRegistry } from "../../src/matchers/auth"
 import { Matcher } from "../../src/matchers"
 import * as _ from "lodash"
 import { TaggedMatcher } from "../../src/common/tagged.types"
+import { BodyRegistry } from "../../src/common/bodyRegistry.types"
 
 describe("chainValidate", () => {
     const request: RequestT = {
@@ -16,13 +15,12 @@ describe("chainValidate", () => {
         consumed: {},
         healthy: true,
     } as const
-    const bodyRegistry: bodyRegistry = {}
-    const authRegistry: authRegistry = {}
+    const bodyRegistry: BodyRegistry = {}
     const crntIdx = 0
 
     it("consumes matching requests", () => {
         const validators: _.RecursiveArray<
-            TaggedMatcher<Matcher<typeof bodyRegistry, typeof authRegistry>>
+            TaggedMatcher<Matcher<typeof bodyRegistry>>
         > = [
             [
                 { _tag: "Matcher", value: "/posts" },
@@ -34,7 +32,6 @@ describe("chainValidate", () => {
             previousValidation,
             validators,
             bodyRegistry,
-            authRegistry,
             crntIdx
         )
         expect(result1).toEqual({
@@ -51,7 +48,7 @@ describe("chainValidate", () => {
 
     it("consumes non matching requests", () => {
         const validators: _.RecursiveArray<
-            TaggedMatcher<Matcher<typeof bodyRegistry, typeof authRegistry>>
+            TaggedMatcher<Matcher<typeof bodyRegistry>>
         > = [
             { _tag: "Matcher", value: "/news" },
             { _tag: "Matcher", value: "?trending=boolean!" },
@@ -60,7 +57,6 @@ describe("chainValidate", () => {
             previousValidation,
             validators,
             bodyRegistry,
-            authRegistry,
             crntIdx
         )
         expect(result1).toEqual({

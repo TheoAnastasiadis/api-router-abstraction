@@ -1,17 +1,15 @@
 import { ConsumedResponse } from "../common/response.consumed"
 import { Matcher } from "../matchers"
-import { authRegistry } from "../matchers/auth"
-import { bodyRegistry } from "../matchers/body"
 import { returnObject } from "../returnObjects"
 import { TaggedController, TaggedMatcher } from "../common/tagged.types"
 import { format } from "./formatting"
+import { BodyRegistry } from "../common/bodyRegistry.types"
 
-export function chainFormat<BR extends bodyRegistry, AR extends authRegistry>(
+export function chainFormat<BR extends BodyRegistry>(
     previousFormatting: ConsumedResponse,
-    matcher: TaggedController<any> | TaggedMatcher<Matcher<BR, AR>>,
+    matcher: TaggedController<any> | TaggedMatcher<Matcher<BR>>,
     data: Record<string, any>,
     bodyRegistry: BR,
-    authRegistry: AR,
     crntIdx: number
 ): { consumedResponse: ConsumedResponse; nextIdx: number } {
     let newFormatting: ConsumedResponse

@@ -27,7 +27,7 @@ export const ParamValidator: ValidatorI<ParamT> = {
                 /\/(?::(?<name>\w*?)\((?<type>\w*?)\))/
             )?.groups || { name: "", type: "" }
             //initializations
-            let consumed: returnObject<any, any, typeof validator> = {}
+            let consumed: returnObject<any, typeof validator> = {}
             let healthy = true
             switch (type) {
                 case "number": // ex. "/:id(number)""
@@ -69,7 +69,7 @@ export const ParamValidator: ValidatorI<ParamT> = {
             const { name } = validator.match(/\/(?<name>\w*)/)?.groups || {
                 name: "",
             }
-            const healthy = element == name
+            const healthy = element === name
             switch (healthy) {
                 case true:
                     return { ...request, path: rest, consumed: {}, healthy }

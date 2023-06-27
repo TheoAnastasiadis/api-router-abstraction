@@ -1,21 +1,17 @@
-import { authRegistry } from "../matchers/auth"
-import { bodyRegistry } from "../matchers/body"
 import { chain as createChain } from "./chain"
 import { alt as createAlt } from "./alt"
-import {
-    controllerRegistry,
-    controller as createController,
-} from "./controller"
+import { controller as createController } from "./controller"
+import { ControllerRegistry } from "../common/controllerRegistry.types"
+import { BodyRegistry } from "../common/bodyRegistry.types"
 
 export default {
     withConfig<
-        BR extends bodyRegistry,
-        AR extends authRegistry,
-        CR extends controllerRegistry
-    >(br: BR, ar: AR, cr: CR) {
-        const { chain, c } = createChain.withConfig(br, ar)
-        const { alt, a } = createAlt.withConfig(br, ar)
-        const { controller, f } = createController.withConfig(cr)
+        const BR extends BodyRegistry,
+        const CR extends ControllerRegistry<BR>
+    >(cr: CR, br: BR) {
+        const { chain, c } = createChain.withConfig(cr, br)
+        const { alt, a } = createAlt.withConfig(cr, br)
+        const { controller, f } = createController.withConfig(cr, br)
         return { chain, c, alt, a, controller, f } as const
     },
 } as const

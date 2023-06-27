@@ -2,20 +2,19 @@ import * as _ from "lodash"
 import { ConsumedResponse } from "../common/response.consumed"
 import { TaggedMatcher, TaggedController } from "../common/tagged.types"
 import { Matcher } from "../matchers"
-import { authRegistry } from "../matchers/auth"
-import { bodyRegistry } from "../matchers/body"
+import { BodyRegistry } from "../common/bodyRegistry.types"
 
-export function altFormat<BR extends bodyRegistry, AR extends authRegistry, T>(
+export function altFormat<BR extends BodyRegistry, T>(
     previousFormatting: ConsumedResponse,
     validators: _.RecursiveArray<
-        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any, string>
+        TaggedMatcher<Matcher<BR>> | TaggedController<string>
     >,
     target: string
 ): {
     consumedResponse: ConsumedResponse
     nextIdx: number
     newLevel: _.RecursiveArray<
-        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any, string>
+        TaggedMatcher<Matcher<BR>> | TaggedController<string>
     >
 } {
     //helper

@@ -1,22 +1,19 @@
+import { BodyRegistry } from "../common/bodyRegistry.types"
+import { ControllerRegistry } from "../common/controllerRegistry.types"
 import { Matcher } from "../matchers"
-import { AuthT, authRegistry } from "../matchers/auth"
-import { BodyT, bodyRegistry } from "../matchers/body"
+import { BodyT } from "../matchers/body"
 import { MethodT } from "../matchers/method"
 import { ParamT } from "../matchers/param"
 import { QueryT } from "../matchers/query"
-import { AuthTReturnObject } from "./auth.return"
 import { BodyTReturnObject } from "./body.return"
 import { MethodTReturnObject } from "./method.return"
 import { ParamTReturnObject } from "./param.return"
 import { QueryTReturnObject } from "./query.return"
 
 export type returnObject<
-    BR extends bodyRegistry,
-    AR extends authRegistry,
-    M extends Matcher<BR, AR>
-> = M extends AuthT<AR>
-    ? AuthTReturnObject<AR, M>
-    : M extends BodyT<BR>
+    BR extends BodyRegistry,
+    M extends Matcher<BR>
+> = M extends BodyT<BR>
     ? BodyTReturnObject<BR, M>
     : M extends MethodT
     ? MethodTReturnObject

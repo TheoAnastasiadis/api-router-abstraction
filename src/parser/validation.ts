@@ -1,6 +1,4 @@
 import { Matcher } from "../matchers"
-import { authRegistry } from "../matchers/auth"
-import { bodyRegistry } from "../matchers/body"
 import { MethodValidator } from "../validators/method.validator"
 import { ParamValidator } from "../validators/param.validator"
 import { QueryValidator } from "../validators/query.validator"
@@ -10,18 +8,19 @@ import {
     RequestT,
 } from "../common/request.consumed"
 import { BodyValidator } from "../validators/body.validator"
+import { BodyRegistry } from "../common/bodyRegistry.types"
 
-export const validate = <BR extends bodyRegistry, AR extends authRegistry>(
+export const validate = <BR extends BodyRegistry>(
     request: ConsumedRequest<any>
 ) => ({
-    with: (validator: Matcher<BR, AR>, bodyRegistry: BR) => {
+    with: (validator: Matcher<BR>, bodyRegistry: BR) => {
         let result: ConsumedRequest<any>
-        if (ParamValidator.is(validator)) {
-            result = ParamValidator.consume(request, validator)
-        } else if (QueryValidator.is(validator)) {
-            result = QueryValidator.consume(request, validator)
-        } else if (MethodValidator.is(validator)) {
-            result = MethodValidator.consume(request, validator)
+        if (ParamValidator.is(validator, bodyRegistry)) {
+            result = ParamValidator.consume(request, validator, bodyRegistry)
+        } else if (QueryValidator.is(validator, bodyRegistry)) {
+            result = QueryValidator.consume(request, validator, bodyRegistry)
+        } else if (MethodValidator.is(validator, bodyRegistry)) {
+            result = MethodValidator.consume(request, validator, bodyRegistry)
         } else if (BodyValidator.is(validator, bodyRegistry)) {
             result = BodyValidator.consume(request, validator, bodyRegistry)
         } else {

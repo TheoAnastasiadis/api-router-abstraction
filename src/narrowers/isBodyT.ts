@@ -1,6 +1,7 @@
-import { BodyT, bodyRegistry } from "../matchers/body"
+import { BodyRegistry } from "../common/bodyRegistry.types"
+import { BodyT } from "../matchers/body"
 
-export default function isBodyT<BR extends bodyRegistry>(
+export default function isBodyT<BR extends BodyRegistry>(
     val: string,
     bodyRegistry?: BR
 ): val is BodyT<BR> {

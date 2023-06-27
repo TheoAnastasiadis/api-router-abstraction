@@ -1,19 +1,13 @@
-import { authRegistry } from "../matchers/auth"
-import { bodyRegistry } from "../matchers/body"
 import { ConsumedRequest, RequestT } from "../common/request.consumed"
 import { validate } from "./validation"
 import { TaggedMatcher, TaggedController } from "../common/tagged.types"
 import { Matcher } from "../matchers"
+import { BodyRegistry } from "../common/bodyRegistry.types"
 
-export function chainValidate<
-    BR extends bodyRegistry,
-    AR extends authRegistry,
-    T
->(
+export function chainValidate<BR extends BodyRegistry, T>(
     previousValidation: ConsumedRequest<T>,
-    validator: TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>,
+    validator: TaggedMatcher<Matcher<BR>> | TaggedController<any>,
     bodyRegistry: BR,
-    authRegistry: AR,
     crntIdx: number
 ): { consumedRequest: ConsumedRequest<T>; nextIdx: number } {
     let newValidation: ConsumedRequest<T>
@@ -23,7 +17,7 @@ export function chainValidate<
             consumedRequest: {
                 ...previousValidation,
                 healthy: true,
-                controller: (validator as TaggedController<any, string>).label,
+                controller: (validator as TaggedController<string>).label,
             },
             nextIdx: crntIdx + 1,
         }

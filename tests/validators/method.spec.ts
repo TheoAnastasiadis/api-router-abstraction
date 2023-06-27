@@ -1,16 +1,23 @@
+import { BodyRegistry } from "../../src/common/bodyRegistry.types"
 import { ParsingErrors } from "../../src/common/request.consumed"
 import { MethodValidator } from "../../src/validators/method.validator"
 
 describe("MethodVaidator", () => {
+    const br: BodyRegistry = {}
+
     it("should narrow Method validators", () => {
-        expect(MethodValidator.is("GET")).toBeTruthy()
-        expect(MethodValidator.is("POST,DELETE")).toBeTruthy()
-        expect(MethodValidator.is("/posts/:username(string)")).toBeFalsy()
+        expect(MethodValidator.is("GET", br)).toBeTruthy()
+        expect(MethodValidator.is("POST,DELETE", br)).toBeTruthy()
+        expect(MethodValidator.is("/posts/:username(string)", br)).toBeFalsy()
     })
 
     it("should match good requests", () => {
         expect(
-            MethodValidator.consume({ path: "/posts", method: "GET" }, "GET")
+            MethodValidator.consume(
+                { path: "/posts", method: "GET" },
+                "GET",
+                br
+            )
         ).toEqual({
             path: "/posts",
             method: "GET",
@@ -20,7 +27,8 @@ describe("MethodVaidator", () => {
         expect(
             MethodValidator.consume(
                 { path: "/posts/4", method: "POST" },
-                "GET,POST"
+                "GET,POST",
+                br
             )
         ).toEqual({
             path: "/posts/4",
@@ -34,7 +42,8 @@ describe("MethodVaidator", () => {
         expect(
             MethodValidator.consume(
                 { path: "/posts?soft=true", method: "POST" },
-                "DELETE"
+                "DELETE",
+                br
             )
         ).toEqual({
             path: "/posts?soft=true",

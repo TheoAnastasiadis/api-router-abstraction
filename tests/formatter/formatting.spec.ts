@@ -1,15 +1,17 @@
+import { BodyRegistry } from "../../src/common/bodyRegistry.types"
 import { format } from "../../src/formatter/formatting"
-import { bodyRegistry } from "../../src/matchers/body"
 import * as t from "io-ts"
 
 describe("formatting", () => {
     it("should format with all types of formatters", () => {
-        const bodyRegistry: bodyRegistry = {
-            post: t.type({
-                author: t.string,
-                date: t.string,
-                body: t.string,
-            }),
+        const bodyRegistry: BodyRegistry = {
+            post: {
+                fields: t.type({
+                    author: t.string,
+                    date: t.string,
+                    body: t.string,
+                }),
+            },
         }
 
         const body = {

@@ -1,28 +1,22 @@
-import { authRegistry } from "../matchers/auth"
-import { bodyRegistry } from "../matchers/body"
 import { ConsumedRequest } from "../common/request.consumed"
 import { validate } from "./validation"
 import * as _ from "lodash"
 import { TaggedMatcher, TaggedController } from "../common/tagged.types"
 import { Matcher } from "../matchers"
+import { BodyRegistry } from "../common/bodyRegistry.types"
 
-export function altValidate<
-    BR extends bodyRegistry,
-    AR extends authRegistry,
-    T
->(
+export function altValidate<BR extends BodyRegistry, T>(
     previousValidation: ConsumedRequest<T>,
     validators: _.RecursiveArray<
-        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
+        TaggedMatcher<Matcher<BR>> | TaggedController<any>
     >,
     bodyRegistry: BR,
-    authRegistry: AR,
     crntIdx: number
 ): {
     consumedRequest: ConsumedRequest<T>
     nextIdx: number
     newLevel: _.RecursiveArray<
-        TaggedMatcher<Matcher<BR, AR>> | TaggedController<any>
+        TaggedMatcher<Matcher<BR>> | TaggedController<any>
     >
 } {
     //helper
@@ -40,10 +34,7 @@ export function altValidate<
                         ...previousValidation,
                         healthy: true,
                         controller: (
-                            relevantValidators[idx] as TaggedController<
-                                any,
-                                string
-                            >
+                            relevantValidators[idx] as TaggedController<string>
                         ).label,
                     },
                     nextIdx: crntIdx + 1,
@@ -60,8 +51,7 @@ export function altValidate<
                     nextIdx: 1,
                     newLevel: Array.isArray(validators[idx])
                         ? (validators[idx] as _.RecursiveArray<
-                              | TaggedMatcher<Matcher<BR, AR>>
-                              | TaggedController<any>
+                              TaggedMatcher<Matcher<BR>> | TaggedController<any>
                           >)
                         : validators,
                 }

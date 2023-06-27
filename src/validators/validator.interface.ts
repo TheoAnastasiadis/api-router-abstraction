@@ -1,28 +1,25 @@
+import { BodyRegistry } from "../common/bodyRegistry.types"
 import { ConsumedRequest, RequestT } from "../common/request.consumed"
 import { ConsumedResponse } from "../common/response.consumed"
 import { Matcher } from "../matchers"
-import { AuthT, authRegistry } from "../matchers/auth"
-import { BodyT, bodyRegistry } from "../matchers/body"
+import { BodyT } from "../matchers/body"
 import { returnObject } from "../returnObjects"
 
-export interface ValidatorI<M extends Matcher<any, any>> {
-    is: <BR extends bodyRegistry, AR extends authRegistry>(
+export interface ValidatorI<M extends Matcher<any>> {
+    is: <BR extends BodyRegistry>(
         val: string,
-        bodyRegistry?: BR,
-        authRegistry?: AR
+        bodyRegistry: BR
     ) => val is M extends BodyT<any> ? BodyT<BR> : M
-    consume: <BR extends bodyRegistry, AR extends authRegistry>(
+    consume: <BR extends BodyRegistry>(
         request: RequestT,
         validator: M,
-        bodyRegistry?: BR,
-        authRegistry?: AR
+        bodyRegistry: BR
     ) => ConsumedRequest<any>
     format: <
-        const BR extends bodyRegistry,
-        const AR extends authRegistry,
+        const BR extends BodyRegistry,
         const m extends M extends BodyT<any> ? BodyT<BR> : M
     >(
-        data: Record<string, any> & returnObject<BR, AR, m>,
+        data: Record<string, any> & returnObject<BR, m>,
         matcher: m,
         response: ConsumedResponse
     ) => ConsumedResponse

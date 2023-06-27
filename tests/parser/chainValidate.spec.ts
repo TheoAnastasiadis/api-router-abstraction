@@ -1,9 +1,8 @@
 import { ParsingErrors, RequestT } from "../../src/common/request.consumed"
 import { chainValidate } from "../../src/parser/chainValidate"
-import { bodyRegistry } from "../../src/matchers/body"
-import { authRegistry } from "../../src/matchers/auth"
 import { Matcher } from "../../src/matchers"
 import { TaggedMatcher } from "../../src/common/tagged.types"
+import { BodyRegistry } from "../../src/common/bodyRegistry.types"
 
 describe("chainValidate", () => {
     const request: RequestT = {
@@ -15,14 +14,11 @@ describe("chainValidate", () => {
         consumed: {},
         healthy: true,
     } as const
-    const bodyRegistry: bodyRegistry = {}
-    const authRegistry: authRegistry = {}
+    const bodyRegistry: BodyRegistry = {}
     const crntIdx = 0
 
     it("consumes matching requests", () => {
-        const validators: TaggedMatcher<
-            Matcher<typeof bodyRegistry, typeof authRegistry>
-        >[] = [
+        const validators: TaggedMatcher<Matcher<typeof bodyRegistry>>[] = [
             { _tag: "Matcher", value: "/posts" },
             { _tag: "Matcher", value: "/:id(number)" },
         ]
@@ -30,7 +26,6 @@ describe("chainValidate", () => {
             previousValidation,
             validators[0],
             bodyRegistry,
-            authRegistry,
             crntIdx
         )
         expect(result1).toEqual({
@@ -46,7 +41,6 @@ describe("chainValidate", () => {
             result1.consumedRequest,
             validators[1],
             bodyRegistry,
-            authRegistry,
             result1.nextIdx
         )
         expect(result2).toEqual({
@@ -61,9 +55,7 @@ describe("chainValidate", () => {
     })
 
     it("consumes non matching requests", () => {
-        const validators: TaggedMatcher<
-            Matcher<typeof bodyRegistry, typeof authRegistry>
-        >[] = [
+        const validators: TaggedMatcher<Matcher<typeof bodyRegistry>>[] = [
             { _tag: "Matcher", value: "/posts" },
             { _tag: "Matcher", value: "/:onlyNew(boolean)" },
         ]
@@ -71,7 +63,6 @@ describe("chainValidate", () => {
             previousValidation,
             validators[0],
             bodyRegistry,
-            authRegistry,
             crntIdx
         )
         expect(result1).toEqual({
@@ -87,7 +78,6 @@ describe("chainValidate", () => {
             result1.consumedRequest,
             validators[1],
             bodyRegistry,
-            authRegistry,
             result1.nextIdx
         )
         expect(result2).toEqual({

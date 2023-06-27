@@ -1,17 +1,20 @@
+import { BodyRegistry } from "../../src/common/bodyRegistry.types"
 import { ParsingErrors, RequestT } from "../../src/common/request.consumed"
 import { ConsumedResponse } from "../../src/common/response.consumed"
-import { BodyT, bodyRegistry } from "../../src/matchers/body"
+import { BodyT } from "../../src/matchers/body"
 import { BodyValidator } from "../../src/validators/body.validator"
 import * as t from "io-ts"
 
 describe("BodyValidator", () => {
-    const bodyRegistry: bodyRegistry = {
-        post: t.type({
-            id: t.number,
-            author: t.string,
-            body: t.string,
-            private: t.boolean,
-        }),
+    const bodyRegistry: BodyRegistry = {
+        post: {
+            fields: t.type({
+                id: t.number,
+                author: t.string,
+                body: t.string,
+                private: t.boolean,
+            }),
+        },
     }
 
     it("should narrow validators", () => {

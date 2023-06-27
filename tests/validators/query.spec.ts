@@ -1,17 +1,23 @@
+import { BodyRegistry } from "../../src/common/bodyRegistry.types"
 import { QueryValidator } from "../../src/validators/query.validator"
 
 describe("QueryValidator", () => {
+    const br: BodyRegistry = {}
+
     it("should be able to narrow query validators", () => {
-        expect(QueryValidator.is("?artist=string!&?desc=boolean")).toBeTruthy()
-        expect(QueryValidator.is("?from=string&to=string")).toBeTruthy()
-        expect(QueryValidator.is("/homepage")).toBeFalsy()
+        expect(
+            QueryValidator.is("?artist=string!&?desc=boolean", br)
+        ).toBeTruthy()
+        expect(QueryValidator.is("?from=string&to=string", br)).toBeTruthy()
+        expect(QueryValidator.is("/homepage", br)).toBeFalsy()
     })
 
     it("should match good requests with boolean type", () => {
         const validator = "?desc=boolean!&allowAdult=boolean"
         const validation = QueryValidator.consume(
             { path: "/posts?desc=true" },
-            validator
+            validator,
+            br
         )
 
         expect(validation).toEqual({
@@ -25,7 +31,8 @@ describe("QueryValidator", () => {
         const validator = "?page=number!&allowAdult=boolean"
         const validation = QueryValidator.consume(
             { path: "/posts?page=3" },
-            validator
+            validator,
+            br
         )
 
         expect(validation).toEqual({
@@ -39,7 +46,8 @@ describe("QueryValidator", () => {
         const validator = "?from=string!&allowAdult=boolean"
         const validation = QueryValidator.consume(
             { path: "/posts?from=2020-16-3" },
-            validator
+            validator,
+            br
         )
 
         expect(validation).toEqual({
@@ -53,13 +61,15 @@ describe("QueryValidator", () => {
         expect(
             QueryValidator.consume(
                 { path: "/news/today" },
-                "?from=string!&to=string!"
+                "?from=string!&to=string!",
+                br
             ).healthy
         ).toBeFalsy()
         expect(
             QueryValidator.consume(
                 { path: "?desc=true" },
-                "?locale=string!&desc=boolean"
+                "?locale=string!&desc=boolean",
+                br
             ).healthy
         ).toBeFalsy()
     })
