@@ -5,7 +5,7 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
-        "test": "npx jest",
+        "test": "npx jest --coverage",
         "build": "tsc ./src"
     },
     "keywords": [

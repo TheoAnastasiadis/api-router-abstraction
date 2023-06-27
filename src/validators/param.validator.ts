@@ -17,14 +17,13 @@ export const ParamValidator: ValidatorI<ParamT> = {
     consume: (request: RequestT, validator: ParamT) => {
         //parse path info
         const { path } = request
-        const { element, rest } = path.match(
-            /\/(?<element>\w*)(?:(?<rest>[/?].*))?/
-        )?.groups || { element: "", rest: "" }
+        const element = path.split(/\/|\?/)[1] // "/post/2" => ["", "post", "2"]
+        const rest = path.substring(element.length + 1) //for the missing "/"
         //parse validator info
         if (hasType(validator)) {
             // "/:id(number)"
             const { name, type } = validator.match(
-                /\/(?::(?<name>\w*?)\((?<type>\w*?)\))/
+                /\/(?::(?<name>\w+?)\((?<type>(?:string)|(?:number)|(?:boolean))\))/
             )?.groups || { name: "", type: "" }
             //initializations
             let consumed: returnObject<any, typeof validator> = {}
@@ -51,7 +50,12 @@ export const ParamValidator: ValidatorI<ParamT> = {
 
             switch (healthy) {
                 case true:
-                    return { ...request, path: rest, consumed, healthy }
+                    return {
+                        ...request,
+                        path: rest,
+                        consumed,
+                        healthy,
+                    }
                     break
 
                 default:
@@ -66,9 +70,7 @@ export const ParamValidator: ValidatorI<ParamT> = {
             }
         } else {
             // ex. "/posts"
-            const { name } = validator.match(/\/(?<name>\w*)/)?.groups || {
-                name: "",
-            }
+            const name = validator.substring(1)
             const healthy = element === name
             switch (healthy) {
                 case true:
@@ -90,8 +92,8 @@ export const ParamValidator: ValidatorI<ParamT> = {
     format(data, matcher, response) {
         let { path } = response
 
-        if (hasType(matcher as ParamT)) {
-            const { name } = matcher.match(/\/:(?<name>.*?)\(/)?.groups || {
+        if (hasType(matcher)) {
+            const { name } = matcher.match(/\/:(?<name>\w+?)\(/)?.groups || {
                 name: undefined,
             }
 

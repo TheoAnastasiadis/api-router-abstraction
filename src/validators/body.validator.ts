@@ -11,25 +11,20 @@ export const BodyValidator: ValidatorI<BodyT<any>> = {
     consume<BR extends BodyRegistry>(
         request: RequestT,
         validator: BodyT<BR>,
-        bodyRegistry?: BR
+        bodyRegistry: BR
     ) {
-        if (typeof bodyRegistry == "undefined")
-            throw new TypeError("Argument `bodyRegistry` must be provided")
-
         //request info
         const { body } = request
         //validator info
-        const { key } = validator.match(/(?<key>\w*?)_body/)?.groups as {
-            key: keyof typeof bodyRegistry
-        }
-
+        const key = validator.replace("_body", "") as keyof BR
         if (typeof body == "undefined")
             return {
                 ...request,
                 consumed: {
                     body: {},
                 } as returnObject<BR, typeof validator>,
-                healthy: true,
+                healthy: false,
+                error: ParsingErrors.BODY_ERROR,
             }
 
         const decoded = bodyRegistry[key]["fields"].decode(body)

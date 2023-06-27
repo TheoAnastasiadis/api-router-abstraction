@@ -10,7 +10,7 @@ describe("alt formatter", () => {
                 TaggedMatcher<Matcher<{}>> | TaggedController<string>
             >
         ] = [
-            [{ _tag: "Matcher", value: "/posts" }],
+            { _tag: "Matcher", value: "/posts" },
             [
                 { _tag: "Matcher", value: "/:id(number)" },
                 { _tag: "Matcher", value: "GET" },

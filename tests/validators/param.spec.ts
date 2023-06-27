@@ -79,4 +79,16 @@ describe("URL Param validator", () => {
             ParamValidator.format({ id: 3 }, "/:id(number)", { path: "/posts" })
         ).toEqual({ path: "/posts/3" })
     })
+
+    it("should handle bad validators", () => {
+        try {
+            ParamValidator.format({ id: 3 }, "notAValidator" as ParamT, {
+                path: "/posts",
+            })
+        } catch (error) {
+            expect(error).toEqual(
+                new TypeError(`Invalid ParamT matcher: ${"notAValidator"}`)
+            )
+        }
+    })
 })

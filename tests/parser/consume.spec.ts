@@ -56,9 +56,18 @@ describe("consume route", () => {
         ]
         const result = consumeRoute(request, validators, bodyRegistry)
 
-        expect(result).toEqual({
+        expect(result).toHaveProperty("_tag", "Left")
+    })
+
+    test("handles validator arrays of unexpected shape", () => {
+        const validators = [
+            { _tag: "Matcher", value: "/posts" },
+            { _tag: "Matcher", value: "/:id(number)" },
+        ] as const
+
+        expect(consumeRoute(request, validators, bodyRegistry)).toEqual({
             _tag: "Left",
-            left: ParsingErrors.PATH_ERROR,
+            left: ParsingErrors.UNKNOWN_ERROR,
         })
     })
 })

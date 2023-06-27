@@ -1,4 +1,5 @@
 import { BodyRegistry } from "../../src/common/bodyRegistry.types"
+import { Matcher } from "../../src/matchers"
 import { validate } from "../../src/parser/validation"
 import * as t from "io-ts"
 
@@ -40,6 +41,13 @@ describe("validate function", () => {
     it("should validate with body validators", () => {
         const validation = validate(consumedRequest).with("user_body", br)
         expect(validation.healthy).toBeTruthy()
+    })
+    it("should handle incorrect validators", () => {
+        const validation = validate(consumedRequest).with(
+            "notAValidator" as Matcher<typeof br>,
+            br
+        )
+        expect(validation.healthy).toBeFalsy()
     })
 })
 //

@@ -1,7 +1,6 @@
 import { BodyRegistry } from "../../src/common/bodyRegistry.types"
 import { ParsingErrors, RequestT } from "../../src/common/request.consumed"
 import { ConsumedResponse } from "../../src/common/response.consumed"
-import { BodyT } from "../../src/matchers/body"
 import { BodyValidator } from "../../src/validators/body.validator"
 import * as t from "io-ts"
 
@@ -42,13 +41,28 @@ describe("BodyValidator", () => {
         })
     })
 
-    it("should not match bad requests", () => {
+    it("should not match bad requests (option 1: bad body)", () => {
         const body = {
             userName: "johnDoe",
             age: "99",
             email: "john@doe.com",
         }
         const request: RequestT = { path: "/posts", method: "PUT", body }
+        const validation = BodyValidator.consume(
+            request,
+            "post_body",
+            bodyRegistry
+        )
+        expect(validation).toEqual({
+            ...request,
+            consumed: { body: {} },
+            healthy: false,
+            error: ParsingErrors.BODY_ERROR,
+        })
+    })
+
+    it("should not match bad requests (option 2: no body)", () => {
+        const request: RequestT = { path: "/posts", method: "PUT" }
         const validation = BodyValidator.consume(
             request,
             "post_body",

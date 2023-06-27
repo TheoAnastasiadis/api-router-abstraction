@@ -4,11 +4,12 @@ import { Matcher } from "../../src/matchers"
 
 describe("chain formatter", () => {
     it("should format consecutive validators", () => {
-        const validators: TaggedMatcher<Matcher<{}>>[] = [
+        const validators = [
             { _tag: "Matcher", value: "/posts" },
             { _tag: "Matcher", value: "/:id(number)" },
+            { _tag: "Controller", label: "FLAG" },
             { _tag: "Matcher", value: "GET" },
-        ]
+        ] as const
 
         const data = { id: 4 }
 
@@ -24,7 +25,7 @@ describe("chain formatter", () => {
         expect(
             chainFormat({ path: "/posts/4" }, validators[2], data, {}, 2)
         ).toEqual({
-            consumedResponse: { path: "/posts/4", method: "GET" },
+            consumedResponse: { path: "/posts/4" },
             nextIdx: 3,
         })
     })

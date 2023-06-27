@@ -71,4 +71,46 @@ describe("chainValidate", () => {
             nextIdx: 1,
         })
     })
+
+    it("can handle already failed requests", () => {
+        const validators: _.RecursiveArray<
+            TaggedMatcher<Matcher<typeof bodyRegistry>>
+        > = [
+            { _tag: "Matcher", value: "/news" },
+            { _tag: "Matcher", value: "?trending=boolean!" },
+        ]
+
+        const alreadyFailedVal = {
+            ...previousValidation,
+            healthy: false,
+            error: ParsingErrors.UNKNOWN_ERROR,
+        }
+        const result = altValidate(
+            alreadyFailedVal,
+            validators,
+            bodyRegistry,
+            crntIdx
+        )
+        expect(result).toEqual({
+            consumedRequest: alreadyFailedVal,
+            newLevel: validators,
+            nextIdx: 1,
+        })
+    })
+
+    it("can handle validators of unexpected shape", () => {
+        const validators = [{ _tag: "Controller", label: "FLAG" } as const]
+
+        const result = altValidate(
+            previousValidation,
+            validators,
+            bodyRegistry,
+            0
+        )
+        expect(result).toEqual({
+            consumedRequest: { ...previousValidation, controller: "FLAG" },
+            newLevel: validators,
+            nextIdx: 1,
+        })
+    })
 })

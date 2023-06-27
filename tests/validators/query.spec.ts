@@ -67,8 +67,22 @@ describe("QueryValidator", () => {
         ).toBeFalsy()
         expect(
             QueryValidator.consume(
+                { path: "?from=a&to=b" },
+                "?from=number&to=number",
+                br
+            ).healthy
+        ).toBeFalsy()
+        expect(
+            QueryValidator.consume(
                 { path: "?desc=true" },
                 "?locale=string!&desc=boolean",
+                br
+            ).healthy
+        ).toBeFalsy()
+        expect(
+            QueryValidator.consume(
+                { path: "?order_desc=yes" },
+                "?order_desc=boolean!",
                 br
             ).healthy
         ).toBeFalsy()

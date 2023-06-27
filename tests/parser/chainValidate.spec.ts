@@ -93,4 +93,27 @@ describe("chainValidate", () => {
             nextIdx: 2,
         })
     })
+
+    it("can handle already failed requests", () => {
+        const validators = [
+            { _tag: "Matcher", value: "/news" },
+            { _tag: "Matcher", value: "?trending=boolean!" },
+        ] as const
+
+        const alreadyFailedVal = {
+            ...previousValidation,
+            healthy: false,
+            error: ParsingErrors.UNKNOWN_ERROR,
+        }
+        const result = chainValidate(
+            alreadyFailedVal,
+            validators[0],
+            bodyRegistry,
+            crntIdx
+        )
+        expect(result).toEqual({
+            consumedRequest: alreadyFailedVal,
+            nextIdx: 1,
+        })
+    })
 })
