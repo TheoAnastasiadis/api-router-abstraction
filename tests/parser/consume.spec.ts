@@ -13,7 +13,7 @@ describe("consume route", () => {
     const request = { path: "/posts/2?incognito=false", method: "GET" }
     const bodyRegistry: BodyRegistry = {}
 
-    test("[routes that match] returns the consumed object", () => {
+    test("[routes that match] return Right", () => {
         const validators: Validators<typeof bodyRegistry> = [
             { _tag: "Matcher", value: "GET" },
             [
@@ -40,7 +40,7 @@ describe("consume route", () => {
         })
     })
 
-    test("[routes that don't match] returns false", () => {
+    test("[routes that don't match] returns Left", () => {
         const validators: _.RecursiveArray<
             TaggedMatcher<Matcher<typeof bodyRegistry>>
         > = [

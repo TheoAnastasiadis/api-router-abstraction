@@ -93,14 +93,9 @@ export function consumeRoute<BR extends BodyRegistry>(
                 consumed: validation.consumed,
             },
         }
-    else if (validation.healthy)
-        return {
-            _tag: "Left",
-            left: ParsingErrors.UNKNOWN_ERROR, //parsing didn't conclude on a controller node
-        }
     else
         return {
             _tag: "Left",
-            left: validation.error,
+            left: (validation as any)?.error || ParsingErrors.UNKNOWN_ERROR, //if no controller has been encountered
         }
 }

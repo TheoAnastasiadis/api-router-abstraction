@@ -24,10 +24,10 @@ export const ParamValidator: ValidatorI<ParamT> = {
             // "/:id(number)"
             const { name, type } = validator.match(
                 /\/(?::(?<name>\w+?)\((?<type>(?:string)|(?:number)|(?:boolean))\))/
-            )?.groups || { name: "", type: "" }
+            )?.groups as { name: string; type: string }
             //initializations
             let consumed: returnObject<any, typeof validator> = {}
-            let healthy = true
+            let healthy = false
             switch (type) {
                 case "number": // ex. "/:id(number)""
                     const num = Number(element)
@@ -41,7 +41,7 @@ export const ParamValidator: ValidatorI<ParamT> = {
                     if (healthy) consumed = { [name]: bool }
                     break
 
-                default: // ex. "/:user(string)"
+                case "string": // ex. "/:user(string)"
                     const str = element
                     healthy = str.length > 0
                     if (healthy) consumed = { [name]: str }
@@ -89,8 +89,8 @@ export const ParamValidator: ValidatorI<ParamT> = {
         let { path } = response
 
         if (hasType(matcher)) {
-            const { name } = matcher.match(/\/:(?<name>\w+?)\(/)?.groups || {
-                name: undefined,
+            const { name } = matcher.match(/\/:(?<name>\w+?)\(/)?.groups as {
+                name: string
             }
 
             if (!name)
