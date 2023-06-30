@@ -1,5 +1,5 @@
 import * as t from "io-ts"
-import RouterGenerator from "../src/router"
+import RouterGenerator from "../src"
 
 describe("Router", () => {
     const generator = RouterGenerator.withConfig({

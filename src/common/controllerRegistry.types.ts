@@ -8,7 +8,7 @@ type ControllerAbstraction<
 > = {
     args: t.TypeC<A>
     body?: keyof BR
-    returnType?: R
+    returnType?: t.Type<R>
 }
 
 export type ControllerRegistry<

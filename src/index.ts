@@ -79,53 +79,20 @@ class RouterGenerator<
     }
 }
 
+export type ControllerImplementations<R extends RouterGenerator<any, any>> =
+    R extends RouterGenerator<infer CR, infer BR>
+        ? {
+              [K in keyof CR]: (
+                  args: t.TypeOf<CR[K]["args"]> &
+                      (keyof BR extends never
+                          ? object
+                          : CR[K]["body"] extends keyof BR
+                          ? { body: t.TypeOf<BR[CR[K]["body"]]["fields"]> }
+                          : object),
+                  router?: R,
+                  ...rest: any
+              ) => t.TypeOf<CR[K]["returnType"] & object>
+          }
+        : unknown
+
 export default RouterGenerator
-
-// const generator = RouterGenerator.withConfig({
-//     controllerRegistry: {
-//         getPostsByAuthor: {
-//             args: t.type({
-//                 name: t.string,
-//                 age: t.number,
-//                 trending: t.boolean,
-//             }),
-//             body: "post",
-//         },
-//     },
-//     bodyRegistry: {
-//         post: {
-//             fields: t.type({
-//                 id: t.number,
-//                 content: t.string,
-//             }),
-//         },
-//     },
-// })
-
-// const { c, f, a } = generator.design()
-
-// const schema = c({
-//     "/:name(string)": c({
-//         "?age=number": c({
-//             "?trending=boolean!": c({
-//                 post_body: f("getPostsByAuthor"),
-//             }),
-//         }),
-//     }),
-// })
-
-// const router = generator.fromSchema(schema)
-
-// const result = router.parse({ path: "/posts/3?name=John" })
-
-// // const impl = Router.getImplementation("getPostById")
-
-// router.format("getPostsByAuthor", {
-//     trending: true,
-//     name: "2",
-//     age: 2,
-//     body: {
-//         id: 5,
-//         content: "Loram Ipsum",
-//     },
-// })
