@@ -1,17 +1,19 @@
 {
-    "name": "api-orchestrator",
+    "name": "api-router-abstraction",
     "version": "1.0.0",
     "description": "Typescript library for easy rest API prototyping",
-    "main": "index.js",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "type": "module",
     "scripts": {
         "test": "npx jest --coverage",
-        "build": "tsc ./src"
+        "build": "tsc",
+        "prepublish": "npm run test & tsc"
     },
     "keywords": [
         "rest",
         "api",
-        "orchestration"
+        "abstraction"
     ],
     "author": "Theo Anastasiadis <theoanastasiadis98@gmail.com>",
     "license": "MIT",
