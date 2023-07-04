@@ -36,6 +36,228 @@ export const alt = {
                   ? P2
                   : Omit<P2, keyof returnObject<BR, K2>>)
         >
+        function alt<
+            K1 extends Matcher<BR>,
+            K2 extends Matcher<BR>,
+            P1 extends Record<string, any>,
+            P2 extends Record<string, any>,
+            C1 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ],
+            C2 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ],
+            K3 extends Matcher<BR>,
+            P3 extends Record<string, any>,
+            C3 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ]
+        >(
+            child1: Record<K1, ParserI<C1, P1 & returnObject<BR, K1>>>,
+            child2: Record<K2, ParserI<C2, P2 & returnObject<BR, K2>>>,
+            child3: Record<K3, ParserI<C3, P3 & returnObject<BR, K3>>>
+        ): ParserI<
+            [
+                [TaggedMatcher<K1>, ...C1],
+                [TaggedMatcher<K2>, ...C2],
+                [TaggedMatcher<K3>, ...C3]
+            ],
+            | (keyof returnObject<BR, K1> extends never
+                  ? P1
+                  : Omit<P1, keyof returnObject<BR, K1>>)
+            | (keyof returnObject<BR, K2> extends never
+                  ? P2
+                  : Omit<P2, keyof returnObject<BR, K2>>)
+            | (keyof returnObject<BR, K3> extends never
+                  ? P3
+                  : Omit<P3, keyof returnObject<BR, K3>>)
+        >
+        function alt<
+            K1 extends Matcher<BR>,
+            K2 extends Matcher<BR>,
+            P1 extends Record<string, any>,
+            P2 extends Record<string, any>,
+            C1 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ],
+            C2 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ],
+            K3 extends Matcher<BR>,
+            P3 extends Record<string, any>,
+            C3 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ],
+            K4 extends Matcher<BR>,
+            P4 extends Record<string, any>,
+            C4 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ]
+        >(
+            child1: Record<K1, ParserI<C1, P1 & returnObject<BR, K1>>>,
+            child2: Record<K2, ParserI<C2, P2 & returnObject<BR, K2>>>,
+            child3: Record<K3, ParserI<C3, P3 & returnObject<BR, K3>>>,
+            child4: Record<K4, ParserI<C4, P4 & returnObject<BR, K4>>>
+        ): ParserI<
+            [
+                [TaggedMatcher<K1>, ...C1],
+                [TaggedMatcher<K2>, ...C2],
+                [TaggedMatcher<K3>, ...C3],
+                [TaggedMatcher<K4>, ...C4]
+            ],
+            | (keyof returnObject<BR, K1> extends never
+                  ? P1
+                  : Omit<P1, keyof returnObject<BR, K1>>)
+            | (keyof returnObject<BR, K2> extends never
+                  ? P2
+                  : Omit<P2, keyof returnObject<BR, K2>>)
+            | (keyof returnObject<BR, K3> extends never
+                  ? P3
+                  : Omit<P3, keyof returnObject<BR, K3>>)
+            | (keyof returnObject<BR, K4> extends never
+                  ? P4
+                  : Omit<P4, keyof returnObject<BR, K4>>)
+        >
+        function alt<
+            K1 extends Matcher<BR>,
+            K2 extends Matcher<BR>,
+            P1 extends Record<string, any>,
+            P2 extends Record<string, any>,
+            C1 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ],
+            C2 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ],
+            K3 extends Matcher<BR>,
+            P3 extends Record<string, any>,
+            C3 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ],
+            K4 extends Matcher<BR>,
+            P4 extends Record<string, any>,
+            C4 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ],
+            K5 extends Matcher<BR>,
+            P5 extends Record<string, any>,
+            C5 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ]
+        >(
+            child1: Record<K1, ParserI<C1, P1 & returnObject<BR, K1>>>,
+            child2: Record<K2, ParserI<C2, P2 & returnObject<BR, K2>>>,
+            child3: Record<K3, ParserI<C3, P3 & returnObject<BR, K3>>>,
+            child4: Record<K4, ParserI<C4, P4 & returnObject<BR, K4>>>,
+            child5: Record<K5, ParserI<C5, P5 & returnObject<BR, K5>>>
+        ): ParserI<
+            [
+                [TaggedMatcher<K1>, ...C1],
+                [TaggedMatcher<K2>, ...C2],
+                [TaggedMatcher<K3>, ...C3],
+                [TaggedMatcher<K4>, ...C4],
+                [TaggedMatcher<K5>, ...C5]
+            ],
+            | (keyof returnObject<BR, K1> extends never
+                  ? P1
+                  : Omit<P1, keyof returnObject<BR, K1>>)
+            | (keyof returnObject<BR, K2> extends never
+                  ? P2
+                  : Omit<P2, keyof returnObject<BR, K2>>)
+            | (keyof returnObject<BR, K3> extends never
+                  ? P3
+                  : Omit<P3, keyof returnObject<BR, K3>>)
+            | (keyof returnObject<BR, K4> extends never
+                  ? P4
+                  : Omit<P4, keyof returnObject<BR, K4>>)
+            | (keyof returnObject<BR, K5> extends never
+                  ? P5
+                  : Omit<P5, keyof returnObject<BR, K5>>)
+        >
+        function alt<
+            K1 extends Matcher<BR>,
+            K2 extends Matcher<BR>,
+            P1 extends Record<string, any>,
+            P2 extends Record<string, any>,
+            C1 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ],
+            C2 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ],
+            K3 extends Matcher<BR>,
+            P3 extends Record<string, any>,
+            C3 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ],
+            K4 extends Matcher<BR>,
+            P4 extends Record<string, any>,
+            C4 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ],
+            K5 extends Matcher<BR>,
+            P5 extends Record<string, any>,
+            C5 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ],
+            K6 extends Matcher<BR>,
+            P6 extends Record<string, any>,
+            C6 extends readonly [
+                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ...any[]
+            ]
+        >(
+            child1: Record<K1, ParserI<C1, P1 & returnObject<BR, K1>>>,
+            child2: Record<K2, ParserI<C2, P2 & returnObject<BR, K2>>>,
+            child3: Record<K3, ParserI<C3, P3 & returnObject<BR, K3>>>,
+            child4: Record<K4, ParserI<C4, P4 & returnObject<BR, K4>>>,
+            child5: Record<K5, ParserI<C5, P5 & returnObject<BR, K5>>>,
+            child6: Record<K6, ParserI<C6, P6 & returnObject<BR, K6>>>
+        ): ParserI<
+            [
+                [TaggedMatcher<K1>, ...C1],
+                [TaggedMatcher<K2>, ...C2],
+                [TaggedMatcher<K3>, ...C3],
+                [TaggedMatcher<K4>, ...C4],
+                [TaggedMatcher<K5>, ...C5],
+                [TaggedMatcher<K6>, ...C6]
+            ],
+            | (keyof returnObject<BR, K1> extends never
+                  ? P1
+                  : Omit<P1, keyof returnObject<BR, K1>>)
+            | (keyof returnObject<BR, K2> extends never
+                  ? P2
+                  : Omit<P2, keyof returnObject<BR, K2>>)
+            | (keyof returnObject<BR, K3> extends never
+                  ? P3
+                  : Omit<P3, keyof returnObject<BR, K3>>)
+            | (keyof returnObject<BR, K4> extends never
+                  ? P4
+                  : Omit<P4, keyof returnObject<BR, K4>>)
+            | (keyof returnObject<BR, K5> extends never
+                  ? P5
+                  : Omit<P5, keyof returnObject<BR, K5>>)
+            | (keyof returnObject<BR, K6> extends never
+                  ? P6
+                  : Omit<P6, keyof returnObject<BR, K6>>)
+        >
         function alt(
             ...children: [
                 Record<Matcher<BR>, ParserI<any, any>>,
