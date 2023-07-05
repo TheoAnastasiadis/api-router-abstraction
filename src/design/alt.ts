@@ -17,11 +17,15 @@ export const alt = {
             const P1 extends Record<string, any>,
             const P2 extends Record<string, any>,
             const C1 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             const C2 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ]
         >(
@@ -42,17 +46,23 @@ export const alt = {
             P1 extends Record<string, any>,
             P2 extends Record<string, any>,
             C1 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             C2 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             K3 extends Matcher<BR>,
             P3 extends Record<string, any>,
             C3 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ]
         >(
@@ -81,23 +91,31 @@ export const alt = {
             P1 extends Record<string, any>,
             P2 extends Record<string, any>,
             C1 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             C2 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             K3 extends Matcher<BR>,
             P3 extends Record<string, any>,
             C3 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             K4 extends Matcher<BR>,
             P4 extends Record<string, any>,
             C4 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ]
         >(
@@ -131,29 +149,39 @@ export const alt = {
             P1 extends Record<string, any>,
             P2 extends Record<string, any>,
             C1 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             C2 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             K3 extends Matcher<BR>,
             P3 extends Record<string, any>,
             C3 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             K4 extends Matcher<BR>,
             P4 extends Record<string, any>,
             C4 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             K5 extends Matcher<BR>,
             P5 extends Record<string, any>,
             C5 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ]
         >(
@@ -192,35 +220,47 @@ export const alt = {
             P1 extends Record<string, any>,
             P2 extends Record<string, any>,
             C1 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             C2 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             K3 extends Matcher<BR>,
             P3 extends Record<string, any>,
             C3 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             K4 extends Matcher<BR>,
             P4 extends Record<string, any>,
             C4 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             K5 extends Matcher<BR>,
             P5 extends Record<string, any>,
             C5 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ],
             K6 extends Matcher<BR>,
             P6 extends Record<string, any>,
             C6 extends readonly [
-                TaggedController<any> | TaggedMatcher<Matcher<BR>>,
+                ..._.RecursiveArray<
+                    TaggedMatcher<Matcher<BR>> | TaggedController<any>
+                >,
                 ...any[]
             ]
         >(
