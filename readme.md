@@ -186,6 +186,10 @@ const controllerImpls: ControllerImplementations<typeof router> = {
 
 -   Addapters for server libraries (like express.js) will have to be written manually.
 
+## Testing
+
+To test run `npm run test`.
+
 ## Contribute 💓💗
 
 If you like the pronciples behind this project and would like to cooperate contact me or open a PR!
