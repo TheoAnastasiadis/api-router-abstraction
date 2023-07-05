@@ -9,6 +9,7 @@ import { Matcher } from "./matchers"
 import createDesign from "./design"
 import * as t from "io-ts"
 import * as _ from "lodash"
+import { Router } from "express"
 
 //helper types
 type Validators<BR extends BodyRegistry> = readonly [
