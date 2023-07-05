@@ -1,6 +1,6 @@
 {
     "name": "api-router-abstraction",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Typescript library for easy rest API prototyping",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
