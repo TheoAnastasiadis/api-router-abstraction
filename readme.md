@@ -2,9 +2,9 @@
 
 <div align="center">
 
-![coverage](https://img.shields.io/badge/100%25-green?label=test%20coverage)
+![coverage](https://img.shields.io/badge/100%25-green?label=Coverage)
 ![MIT License](https://img.shields.io/badge/License-MIT-blue.svg)
-![version](https://img.shields.io/badge/1.0.0-blue?label=version)
+![version](https://img.shields.io/badge/1.0.0-blue?label=Version)
 
 </div>
 
@@ -80,7 +80,7 @@ will require that the request matches all 3 sequentially (ex. `GET /search?q=car
 
 ### Alt
 
-Function `a` or `alt` will arrange validators in parallel. For example
+The function `a` or `alt` will arrange validators in parallel. For example
 
 ```typescript
 c({
@@ -100,7 +100,7 @@ Function `controller` or `f` takes a key of `controllerRegistry` as argument. It
 
 ## Compile
 
-In order for your code to compile your all controller nodes must be able to be supplied with all their arguments (as assigned in the `controllerRegistry` object).
+For your code to compile your all controller nodes, they must be supplied with all their arguments (as assigned in the `controllerRegistry` object).
 
 ```typescript
 const generator = RouterGenerator.withConfig({
@@ -147,9 +147,9 @@ router.format("createPost", {
 
 | type       | format examples                                                                              | notes                                                                                                                                                                                                                                                                                                                                               |
 | ---------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Method     | `"GET"`, `"POST"`, `"PUT"`, `"DELETE"` and even combinations like `"GET, POST"` etc.         | These will match with the request method. If a method is not provided to the `router.parse` function, these validators will be ignored.                                                                                                                                                                                                             |
+| Method     | `"GET"`, `"POST"`, `"PUT"`, `"DELETE"` and even combinations like `"GET, POST"` etc.         | These will match the request method. These validators will be ignored if a method is not provided to the `router.parse` function.                                                                                                                                                                                                             |
 | Path Param | `"/pathName"` or `"/:paramName(string)"`, `"/:paramName(number)"`, `"/:paramName(boolean)"`. | They will match with the path URL string. The `router.parse` function will return a consumed object containing param names and values. For `"/:paramName(number)"` and `"/:paramName(boolean)"` if the provided path cannot be parsed according to the specified type, the validation won't resolve. `"/:paramName(string)"` will match everything. |
-| Query      | `"?name=string"`, `"?name1=number&name2=boolean"`, `"name1=string&name2=number!"`, etc...    | They will match to the query part of the request url. If a `!` is provided after the query param type, the matching won't resolve without if the param is not present.                                                                                                                                                                              |
+| Query      | `"?name=string"`, `"?name1=number&name2=boolean"`, `"name1=string&name2=number!"`, etc...    | They will match the query part of the request URL. If a `!` is provided after the query param type, the matching won't resolve if the param is not present.                                                                                                                                                                              |
 | body       | `"post_body"`, `"user_body"`, etc...                                                         | They will use io-ts parsers of the corresponding `bodyRegistry` key in order to validate the request body payload.                                                                                                                                                                                                                                  |
 
 # Controller Implementations
@@ -178,13 +178,13 @@ const controllerImpls: ControllerImplementations<typeof router> = {
 
 # Limitations
 
--   Authentication is not handled in this library. User object should be provided in the rest parameters of controller functions.
+-   Authentication is not handled in this library. User objects should be provided in the rest parameters of controller functions.
 
 -   Safety: this library should not be used in production without extensive security testing.
 
--   Unexpected behaviour: thorough testing on all possible url configurations, charsets and lengths has not been carried out.
+-   Unexpected behaviour: thorough testing on all possible URL configurations, charsets and lengths has not been carried out.
 
--   Addapters for server libraries (like express.js) will have to be written manually.
+-   Adapters for server libraries (like express.js) must be written manually.
 
 ## Testing
 
@@ -192,7 +192,7 @@ To test run `npm run test`.
 
 ## Contribute 💓💗
 
-If you like the pronciples behind this project and would like to cooperate contact me or open a PR!
+If you like the principles behind this project and would like to cooperate contact me or open a PR!
 
 # Check out more
 
