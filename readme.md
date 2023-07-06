@@ -96,11 +96,11 @@ will require that the request matches any of the arguments of `a` (ex. `POST /us
 
 ### Controller
 
-Function `controller` or `f` takes a key of `controllerRegistry` as argument. It used to type-check your interface design and format url paths (see example bellow).
+Function `controller` or `f` takes a key of `controllerRegistry` as an argument. It is used to type-check your interface design and format url paths (see example below).
 
 ## Compile
 
-For your code to compile your all controller nodes, they must be supplied with all their arguments (as assigned in the `controllerRegistry` object).
+For your code to compile, all your controller nodes must be able to be supplied with all their arguments (as specified in the `controllerRegistry` object).
 
 ```typescript
 const generator = RouterGenerator.withConfig({
