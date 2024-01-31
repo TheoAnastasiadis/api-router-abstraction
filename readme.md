@@ -17,7 +17,7 @@ Typescript library to help abstract router details from controller implementatio
 ## Install
 
 ```bash
-pip install api-router-abstraction
+npm install api-router-abstraction
 ```
 
 ## Define controllers
